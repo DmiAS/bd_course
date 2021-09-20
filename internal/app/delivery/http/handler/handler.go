@@ -7,17 +7,20 @@ import (
 )
 
 type Handler struct {
-	router    *gin.Engine
+	router *gin.Engine
+
 	workers   service.IWorkerService
 	auth      service.IAuthService
 	projects  service.IProjectService
 	threads   service.IThreadService
 	campaigns service.ICampaignService
+	clients   service.IClientService
 }
 
 func NewHandler(workers service.IWorkerService, auth service.IAuthService,
 	projects service.IProjectService, threads service.IThreadService,
-	campaigns service.ICampaignService) *Handler {
+	campaigns service.ICampaignService,
+	clients service.IClientService) *Handler {
 	router := gin.Default()
 	handler := &Handler{
 		router:    router,
@@ -36,8 +39,18 @@ func (h *Handler) initRoutes() {
 	{
 		workers.POST("/", h.createWorker)
 		workers.GET("/", h.getWorkers)
+		workers.GET("/:id", h.getWorker)
 		workers.PUT("/:id", h.updateWorker)
 		workers.DELETE("/:id", h.deleteWorker)
+	}
+
+	clients := h.router.Group("/clients")
+	{
+		clients.POST("/", h.createClient)
+		clients.GET("/", h.getClients)
+		clients.GET("/", h.getClient)
+		clients.PUT("/:id", h.updateClient)
+		clients.DELETE("/:id", h.deleteClient)
 	}
 
 	projects := h.router.Group("/projects")

@@ -35,3 +35,11 @@ type IThreadService interface {
 type ICampaignService interface {
 	Update(camp *models.Campaign) error
 }
+
+type IClientService interface {
+	Create(client *models.Client) (uuid.UUID, error)
+	Update(client *models.Client) error
+	Delete(id uuid.UUID) error
+	Get(id uuid.UUID) (*models.Client, error)
+	GetAll() (models.Clients, error)
+}

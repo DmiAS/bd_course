@@ -36,3 +36,11 @@ type ICampaignRepository interface {
 	UpdateWorker(campID, workerID uuid.UUID) error
 	UpdateThread(threadID uuid.UUID) error
 }
+
+type IClientRepository interface {
+	Create(client *models.Client) (uuid.UUID, error)
+	Update(client *models.Client) error
+	Delete(id uuid.UUID) error
+	Get(id uuid.UUID) (*models.Client, error)
+	GetAll() (models.Clients, error)
+}

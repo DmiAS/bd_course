@@ -7,7 +7,7 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
-func ConvertWorkerCreateInput(req *ds.CreateWorkerInput) (*models.Worker, string) {
+func ConvertCreateWorkerInput(req *ds.CreateWorkerInput) (*models.Worker, string) {
 	return &models.Worker{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
@@ -16,14 +16,14 @@ func ConvertWorkerCreateInput(req *ds.CreateWorkerInput) (*models.Worker, string
 	}, req.Login
 }
 
-func ConvertWorkerCreateOutput(login, password string) *ds.CreateWorkerOutput {
+func ConvertCreateWorkerOutput(login, password string) *ds.CreateWorkerOutput {
 	return &ds.CreateWorkerOutput{
 		Login:    login,
 		Password: password,
 	}
 }
 
-func ConvertWorkerUpdateInput(worker *ds.UpdateWorkerInput, id uuid.UUID) *models.Worker {
+func ConvertUpdateWorkerInput(worker *ds.UpdateWorkerInput, id uuid.UUID) *models.Worker {
 	return &models.Worker{
 		UUID:      id,
 		FirstName: worker.FirstName,
@@ -42,11 +42,11 @@ func convertToWorker(worker models.Worker) ds.Worker {
 	}
 }
 
-func ConvertWorkerGetOutput(worker *models.Worker) *ds.GetWorkerOutput {
+func ConvertGetWorkerOutput(worker *models.Worker) *ds.GetWorkerOutput {
 	return &ds.GetWorkerOutput{convertToWorker(*worker)}
 }
 
-func ConvertWorkerGetAllOutput(workers models.Workers) *ds.GetAllWorkersOutput {
+func ConvertGetAllWorkerOutput(workers models.Workers) *ds.GetAllWorkersOutput {
 	cnt := len(workers)
 	ws := make([]ds.WorkerUUID, 0, cnt)
 

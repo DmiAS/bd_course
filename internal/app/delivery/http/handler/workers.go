@@ -16,7 +16,7 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 		return
 	}
 
-	worker, login := converters.ConvertWorkerCreateInput(req)
+	worker, login := converters.ConvertCreateWorkerInput(req)
 
 	id, err := h.workers.Create(worker)
 	if err != nil {
@@ -29,7 +29,7 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := converters.ConvertWorkerCreateOutput(login, pass)
+	resp := converters.ConvertCreateWorkerOutput(login, pass)
 
 	ctx.JSON(http.StatusOK, resp)
 }
@@ -48,7 +48,7 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 		return
 	}
 
-	worker := converters.ConvertWorkerUpdateInput(req, id)
+	worker := converters.ConvertUpdateWorkerInput(req, id)
 
 	if err := h.workers.Update(worker); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
@@ -65,7 +65,7 @@ func (h *Handler) getWorkers(ctx *gin.Context) {
 		return
 	}
 
-	resp := converters.ConvertWorkerGetAllOutput(workers)
+	resp := converters.ConvertGetAllWorkerOutput(workers)
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -82,7 +82,7 @@ func (h *Handler) getWorker(ctx *gin.Context) {
 		return
 	}
 
-	resp := converters.ConvertWorkerGetOutput(worker)
+	resp := converters.ConvertGetWorkerOutput(worker)
 
 	ctx.JSON(http.StatusOK, resp)
 }
