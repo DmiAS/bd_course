@@ -31,3 +31,7 @@ type IThreadService interface {
 	Update(thread *models.Thread) error
 	Delete(id uuid.UUID) error
 }
+
+type ICampaignService interface {
+	Update(camp *models.Campaign) error
+}

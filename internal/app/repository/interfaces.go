@@ -31,3 +31,8 @@ type IThreadRepository interface {
 	Update(thread *models.Thread) error
 	Delete(id uuid.UUID) error
 }
+
+type ICampaignRepository interface {
+	UpdateWorker(campID, workerID uuid.UUID) error
+	UpdateThread(threadID uuid.UUID) error
+}
