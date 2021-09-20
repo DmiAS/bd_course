@@ -9,7 +9,7 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
-func (h *Handler) createProject(ctx *gin.Context) {
+func (h *Handler) createThread(ctx *gin.Context) {
 	req := new(ds.CreateProjectInput)
 
 	if err := ctx.BindJSON(req); err != nil {
@@ -30,7 +30,7 @@ func (h *Handler) createProject(ctx *gin.Context) {
 
 }
 
-func (h *Handler) getProjects(ctx *gin.Context) {
+func (h *Handler) getThreads(ctx *gin.Context) {
 	id, err := extractID(ctx)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
@@ -48,7 +48,7 @@ func (h *Handler) getProjects(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-func (h *Handler) updateProject(ctx *gin.Context) {
+func (h *Handler) updateThread(ctx *gin.Context) {
 	id, err := extractID(ctx)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
@@ -69,7 +69,7 @@ func (h *Handler) updateProject(ctx *gin.Context) {
 	}
 }
 
-func (h *Handler) deleteProject(ctx *gin.Context) {
+func (h *Handler) deleteThread(ctx *gin.Context) {
 	id, err := extractID(ctx)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())

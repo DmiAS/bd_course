@@ -21,5 +21,13 @@ type IAuthService interface {
 type IProjectService interface {
 	Create(project *models.Project) (uuid.UUID, error)
 	Get(clientID uuid.UUID) (models.Projects, error)
+	Update(project *models.Project) error
+	Delete(id uuid.UUID) error
+}
+
+type IThreadService interface {
+	Create(thread *models.Thread) (uuid.UUID, error)
+	Get(projectID uuid.UUID) (models.Threads, error)
+	Update(thread *models.Thread) error
 	Delete(id uuid.UUID) error
 }

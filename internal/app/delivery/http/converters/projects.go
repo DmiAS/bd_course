@@ -40,3 +40,10 @@ func ConvertGetProjectsOutput(projects models.Projects) *ds.GetProjectsOutput {
 		Projects: res,
 	}
 }
+
+func ConvertUpdateInput(name string, id uuid.UUID) *models.Project {
+	return &models.Project{
+		ID:   id,
+		Name: name,
+	}
+}

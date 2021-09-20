@@ -20,3 +20,7 @@ type GetProjectsOutput struct {
 type CreateProjectOutput struct {
 	Project
 }
+
+type UpdateProjectInput struct {
+	Name string `json:"name"`
+}
