@@ -22,12 +22,12 @@ func (s *Service) CreateAuth(id uuid.UUID, firstName, lastName string) (*models.
 		return nil, err
 	}
 
-	hashedPassword, err := gen.GenPasswordWithSalt(password, salt)
+	hashedPassword, err := gen.PasswordWithSalt(password, salt)
 	if err != nil {
 		return nil, err
 	}
 
-	login := gen.GenLogin(firstName, lastName)
+	login := gen.Login(firstName, lastName)
 	auth := &models.Auth{
 		ID:       id,
 		Login:    login,

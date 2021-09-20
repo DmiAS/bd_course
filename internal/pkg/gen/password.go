@@ -24,7 +24,7 @@ func genReadableString(size int) string {
 	return string(res)
 }
 
-func GenLogin(firstName, lastName string) string {
+func Login(firstName, lastName string) string {
 	trans := transliterator.NewTransliterator(nil)
 	firstName = trans.Transliterate(firstName, "en")
 	lastName = trans.Transliterate(lastName, "en")
@@ -55,7 +55,7 @@ func GenerateRandomString(size int) ([]byte, error) {
 	return salt, nil
 }
 
-func GenPasswordWithSalt(password, salt []byte) (string, error) {
+func PasswordWithSalt(password, salt []byte) (string, error) {
 	var sha512Hasher = sha256.New()
 
 	// Append salt to gen
