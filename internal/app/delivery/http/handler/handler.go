@@ -1,16 +1,35 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/DmiAS/bd_course/internal/app/service"
+	"github.com/gin-gonic/gin"
+)
 
-type IEndpoint interface {
+type IService interface {
+	service.IWorkerService
+	service.IAuthService
 }
 
-func NewHandler(endpoint IEndpoint) *gin.Engine {
+type Handler struct {
+	router   *gin.Engine
+	services IService
+}
+
+func NewHandler(services IService) *Handler {
 	router := gin.Default()
-	initRoutes(router)
-	return router
+	handler := &Handler{
+		router:   router,
+		services: services,
+	}
+	handler.initRoutes()
+	return handler
 }
 
-func initRoutes(router *gin.Engine) {
-
+func (h *Handler) initRoutes() {
+	workers := h.router.Group("/workers")
+	{
+		workers.POST("/", h.createWorker)
+		workers.GET("/")
+		workers.GET("/:id")
+	}
 }
