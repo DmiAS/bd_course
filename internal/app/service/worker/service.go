@@ -8,6 +8,6 @@ type Service struct {
 	rep repository.IWorkerRepository
 }
 
-func NewWorkerService(rep repository.IWorkerRepository) *Service {
+func NewService(rep repository.IWorkerRepository) *Service {
 	return &Service{rep: rep}
 }

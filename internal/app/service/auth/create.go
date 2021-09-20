@@ -31,5 +31,5 @@ func (s *Service) CreateAuth(id uuid.UUID, login string) (string, error) {
 		Login:    login,
 		Password: hashedPassword,
 	}
-	return string(password), s.rep.CreateAuth(auth)
+	return string(password), s.rep.Create(auth)
 }

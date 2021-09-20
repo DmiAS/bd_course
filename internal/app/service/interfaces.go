@@ -17,3 +17,9 @@ type IWorkerService interface {
 type IAuthService interface {
 	Create(id uuid.UUID, login string) (string, error)
 }
+
+type IProjectService interface {
+	Create(project *models.Project) (uuid.UUID, error)
+	Get(clientID uuid.UUID) (models.Projects, error)
+	Delete(id uuid.UUID) error
+}

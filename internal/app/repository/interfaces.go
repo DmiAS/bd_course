@@ -17,3 +17,9 @@ type IWorkerRepository interface {
 type IAuthRepository interface {
 	Create(auth *models.Auth) error
 }
+
+type IProjectRepository interface {
+	Create(project *models.Project) (uuid.UUID, error)
+	Get(clientID uuid.UUID) (models.Projects, error)
+	Delete(id uuid.UUID) error
+}

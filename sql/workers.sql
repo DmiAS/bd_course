@@ -1,6 +1,6 @@
 create table if not exists workers
 (
-    id         uuid,
+    id         uuid primary key,
     first_name varchar(128),
     last_name  varchar(128),
     grade      varchar(16),
