@@ -10,13 +10,13 @@ import (
 )
 
 func (h *Handler) createWorker(ctx *gin.Context) {
-	req := new(ds.CreateWorkerInput)
+	req := new(ds.Worker)
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	worker, login := converters.ConvertCreateWorkerInput(req)
+	worker := converters.ConvertWorkerInput(req)
 
 	id, err := h.workers.Create(worker)
 	if err != nil {
@@ -24,18 +24,18 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 		return
 	}
 
-	pass, err := h.auth.Create(id, login)
+	auth, err := h.auth.Create(id)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := converters.ConvertCreateWorkerOutput(login, pass)
+	resp := converters.ConvertAuthOutput(auth)
 
 	ctx.JSON(http.StatusOK, resp)
 }
 
 func (h *Handler) updateWorker(ctx *gin.Context) {
-	req := new(ds.UpdateWorkerInput)
+	req := new(ds.Worker)
 
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
@@ -82,7 +82,7 @@ func (h *Handler) getWorker(ctx *gin.Context) {
 		return
 	}
 
-	resp := converters.ConvertGetWorkerOutput(worker)
+	resp := converters.ConvertWorkerOutput(worker)
 
 	ctx.JSON(http.StatusOK, resp)
 }

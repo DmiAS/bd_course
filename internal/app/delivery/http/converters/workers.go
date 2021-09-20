@@ -7,43 +7,40 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
-func ConvertCreateWorkerInput(req *ds.CreateWorkerInput) (*models.Worker, string) {
+func ConvertWorkerInput(req *ds.Worker) *models.Worker {
 	return &models.Worker{
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Grade:     req.Grade,
-		Position:  req.Position,
-	}, req.Login
-}
-
-func ConvertCreateWorkerOutput(login, password string) *ds.CreateWorkerOutput {
-	return &ds.CreateWorkerOutput{
-		Login:    login,
-		Password: password,
+		User: models.User{
+			FirstName: req.FirstName,
+			LastName:  req.LastName,
+			VkLink:    req.VkLink,
+			TgLink:    req.TgLink,
+		},
 	}
 }
 
-func ConvertUpdateWorkerInput(worker *ds.UpdateWorkerInput, id uuid.UUID) *models.Worker {
+func ConvertUpdateWorkerInput(req *ds.Worker, id uuid.UUID) *models.Worker {
 	return &models.Worker{
-		UUID:      id,
-		FirstName: worker.FirstName,
-		LastName:  worker.LastName,
-		Grade:     worker.Grade,
-		Position:  worker.Position,
+		User: models.User{
+			ID:        id,
+			FirstName: req.FirstName,
+			LastName:  req.LastName,
+			VkLink:    req.VkLink,
+			TgLink:    req.TgLink,
+		},
 	}
 }
 
 func convertToWorker(worker models.Worker) ds.Worker {
 	return ds.Worker{
-		FirstName: worker.FirstName,
-		LastName:  worker.LastName,
-		Grade:     worker.Grade,
-		Position:  worker.Position,
+		User:     convertUser(worker.User),
+		Grade:    worker.Grade,
+		Position: worker.Position,
 	}
 }
 
-func ConvertGetWorkerOutput(worker *models.Worker) *ds.GetWorkerOutput {
-	return &ds.GetWorkerOutput{convertToWorker(*worker)}
+func ConvertWorkerOutput(worker *models.Worker) *ds.Worker {
+	res := convertToWorker(*worker)
+	return &res
 }
 
 func ConvertGetAllWorkerOutput(workers models.Workers) *ds.GetAllWorkersOutput {
@@ -53,7 +50,7 @@ func ConvertGetAllWorkerOutput(workers models.Workers) *ds.GetAllWorkersOutput {
 	for _, w := range workers {
 		ws = append(ws, ds.WorkerUUID{
 			Worker: convertToWorker(w),
-			UUID:   w.UUID,
+			UUID:   w.User.ID,
 		})
 	}
 
