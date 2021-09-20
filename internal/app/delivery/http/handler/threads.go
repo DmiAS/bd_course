@@ -10,21 +10,21 @@ import (
 )
 
 func (h *Handler) createThread(ctx *gin.Context) {
-	req := new(ds.CreateProjectInput)
+	req := new(ds.CreateThreadInput)
 
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	project := converters.ConvertCreateProjectInput(req)
-	id, err := h.projects.Create(project)
+	thread := converters.ConvertCreateThreadInput(req)
+	id, err := h.threads.Create(thread)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	resp := converters.ConvertCreateProjectOutput(id, project.Name)
+	resp := converters.ConvertCreateProjectOutput(id, thread.Name)
 
 	ctx.JSON(http.StatusOK, resp)
 
@@ -37,13 +37,13 @@ func (h *Handler) getThreads(ctx *gin.Context) {
 		return
 	}
 
-	projects, err := h.projects.Get(id)
+	threads, err := h.threads.Get(id)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	resp := converters.ConvertGetProjectsOutput(projects)
+	resp := converters.ConvertGetThreadsOutput(threads)
 
 	ctx.JSON(http.StatusOK, resp)
 }
@@ -55,15 +55,15 @@ func (h *Handler) updateThread(ctx *gin.Context) {
 		return
 	}
 
-	req := new(ds.UpdateProjectInput)
+	req := new(ds.UpdateThreadInput)
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	project := converters.ConvertUpdateInput(req.Name, id)
+	thread := converters.ConvertUpdateThreadInput(req.Name, id)
 
-	if err := h.projects.Update(project); err != nil {
+	if err := h.threads.Update(thread); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -76,7 +76,7 @@ func (h *Handler) deleteThread(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.projects.Delete(id); err != nil {
+	if err := h.threads.Delete(id); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
 	}

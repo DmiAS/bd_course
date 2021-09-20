@@ -11,16 +11,18 @@ type Handler struct {
 	workers  service.IWorkerService
 	auth     service.IAuthService
 	projects service.IProjectService
+	threads  service.IThreadService
 }
 
 func NewHandler(workers service.IWorkerService, auth service.IAuthService,
-	projects service.IProjectService) *Handler {
+	projects service.IProjectService, threads service.IThreadService) *Handler {
 	router := gin.Default()
 	handler := &Handler{
 		router:   router,
 		workers:  workers,
 		auth:     auth,
 		projects: projects,
+		threads:  threads,
 	}
 	handler.initRoutes()
 	return handler

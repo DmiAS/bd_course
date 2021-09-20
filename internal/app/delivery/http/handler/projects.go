@@ -61,7 +61,7 @@ func (h *Handler) updateProject(ctx *gin.Context) {
 		return
 	}
 
-	project := converters.ConvertUpdateInput(req.Name, id)
+	project := converters.ConvertUpdateProjectInput(req.Name, id)
 
 	if err := h.projects.Update(project); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
