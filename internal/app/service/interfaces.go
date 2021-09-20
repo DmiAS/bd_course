@@ -8,6 +8,7 @@ import (
 
 type IWorkerService interface {
 	CreateWorker(worker *models.Worker) (uuid.UUID, error)
+	UpdateWorker(worker *models.Worker) error
 }
 
 type IAuthService interface {

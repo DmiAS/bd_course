@@ -29,7 +29,8 @@ func (h *Handler) initRoutes() {
 	workers := h.router.Group("/workers")
 	{
 		workers.POST("/", h.createWorker)
-		workers.GET("/")
-		workers.GET("/:id")
+		workers.GET("/", h.getWorkers)
+		workers.PUT("/:id", h.updateWorker)
+		workers.DELETE("/:id", h.deleteWorker)
 	}
 }

@@ -16,3 +16,7 @@ type CreateWorkerOutput struct {
 	Login    string `json:"login"`
 	Password string `json:"gen"`
 }
+
+type UpdateWorkerInput struct {
+	Worker
+}

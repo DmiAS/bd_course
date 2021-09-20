@@ -7,9 +7,10 @@ import (
 )
 
 type IWorkerRepository interface {
-	CreateWorker(worker *models.Worker) (uuid.UUID, error)
+	Create(worker *models.Worker) (uuid.UUID, error)
+	Update(worker *models.Worker) error
 }
 
 type IAuthRepository interface {
-	CreateAuth(auth *models.Auth) error
+	Create(auth *models.Auth) error
 }
