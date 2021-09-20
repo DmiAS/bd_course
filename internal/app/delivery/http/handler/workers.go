@@ -24,12 +24,11 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 		return
 	}
 
-	auth, err := h.auth.Create(id)
+	resp, err := h.registerUser(id, req.FirstName, req.LastName)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
+		return
 	}
-
-	resp := converters.ConvertAuthOutput(auth)
 
 	ctx.JSON(http.StatusOK, resp)
 }

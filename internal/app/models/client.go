@@ -3,8 +3,5 @@ package models
 import "github.com/google/uuid"
 
 type Client struct {
-	UUID      uuid.UUID
-	FirstName string
-	LastName  string
+	ID uuid.UUID
 }
-type Clients []Client

@@ -15,7 +15,7 @@ type IWorkerService interface {
 }
 
 type IAuthService interface {
-	Create(id uuid.UUID) (*models.Auth, error)
+	Create(id uuid.UUID, firstName, lastName string) (*models.Auth, error)
 }
 
 type IProjectService interface {
@@ -37,9 +37,9 @@ type ICampaignService interface {
 }
 
 type IClientService interface {
-	Create(client *models.Client) (uuid.UUID, error)
-	Update(client *models.Client) error
+	Create(client *models.User) (uuid.UUID, error)
+	Update(client *models.User) error
 	Delete(id uuid.UUID) error
-	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() (models.Clients, error)
+	Get(id uuid.UUID) (*models.User, error)
+	GetAll() (models.Users, error)
 }

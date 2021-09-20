@@ -32,7 +32,7 @@ func ConvertUpdateWorkerInput(req *ds.Worker, id uuid.UUID) *models.Worker {
 
 func convertToWorker(worker models.Worker) ds.Worker {
 	return ds.Worker{
-		User:     convertUser(worker.User),
+		User:     ConvertUserOutput(worker.User),
 		Grade:    worker.Grade,
 		Position: worker.Position,
 	}

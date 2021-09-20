@@ -9,3 +9,4 @@ type User struct {
 	VkLink    string
 	TgLink    string
 }
+type Users []User

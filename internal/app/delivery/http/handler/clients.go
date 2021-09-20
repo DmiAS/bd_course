@@ -10,32 +10,31 @@ import (
 )
 
 func (h *Handler) createClient(ctx *gin.Context) {
-	//req := new(ds.CreateWorkerInput)
-	//if err := ctx.BindJSON(req); err != nil {
-	//	ctx.String(http.StatusBadRequest, err.Error())
-	//	return
-	//}
-	//
-	//worker, login := converters.ConvertWorkerCreateInput(req)
-	//
-	//id, err := h.workers.Create(worker)
-	//if err != nil {
-	//	ctx.String(http.StatusInternalServerError, err.Error())
-	//	return
-	//}
-	//
-	//pass, err := h.auth.Create(id, login)
-	//if err != nil {
-	//	ctx.String(http.StatusInternalServerError, err.Error())
-	//}
-	//
-	//resp := converters.ConvertWorkerCreateOutput(login, pass)
-	//
-	//ctx.JSON(http.StatusOK, resp)
+	req := new(ds.User)
+	if err := ctx.BindJSON(req); err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	user := converters.ConvertUserInput(req)
+
+	id, err := h.clients.Create(user)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	resp, err := h.registerUser(id, req.FirstName, req.LastName)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 func (h *Handler) updateClient(ctx *gin.Context) {
-	req := new(ds.UpdateClientInput)
+	req := new(ds.User)
 
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
@@ -48,7 +47,7 @@ func (h *Handler) updateClient(ctx *gin.Context) {
 		return
 	}
 
-	client := converters.ConvertUpdateClientInput(req, id)
+	client := converters.ConvertUserWitIDInput(req, id)
 
 	if err := h.clients.Update(client); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())

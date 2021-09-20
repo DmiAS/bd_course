@@ -3,7 +3,7 @@ package models
 import "github.com/google/uuid"
 
 type Auth struct {
-	UUID     uuid.UUID
+	ID       uuid.UUID
 	Login    string
 	Password string
 }

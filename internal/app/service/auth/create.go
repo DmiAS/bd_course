@@ -10,26 +10,33 @@ import (
 const passwordSize = 12
 const saltSize = 16
 
-func (s *Service) CreateAuth(id uuid.UUID, login string) (string, error) {
+func (s *Service) CreateAuth(id uuid.UUID, firstName, lastName string) (*models.Auth, error) {
+
 	salt, err := gen.GenerateRandomString(saltSize)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	password, err := gen.GenerateRandomString(passwordSize)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	hashedPassword, err := gen.GenPasswordWithSalt(password, salt)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
+	login := gen.GenLogin(firstName, lastName)
 	auth := &models.Auth{
-		UUID:     id,
+		ID:       id,
 		Login:    login,
 		Password: hashedPassword,
 	}
-	return string(password), s.rep.Create(auth)
+
+	if err := s.rep.Create(auth); err != nil {
+		return nil, err
+	}
+
+	return auth, nil
 }
