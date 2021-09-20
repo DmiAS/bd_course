@@ -1,25 +1,23 @@
 package http
 
 import (
-	"github.com/DmiAS/bd_course/internal/app/service"
 	"github.com/gin-gonic/gin"
+
+	"github.com/DmiAS/bd_course/internal/app/service"
 )
 
-type IService interface {
-	service.IWorkerService
-	service.IAuthService
-}
-
 type Handler struct {
-	router   *gin.Engine
-	services IService
+	router  *gin.Engine
+	workers service.IWorkerService
+	auth    service.IAuthService
 }
 
-func NewHandler(services IService) *Handler {
+func NewHandler(workers service.IWorkerService, auth service.IAuthService) *Handler {
 	router := gin.Default()
 	handler := &Handler{
-		router:   router,
-		services: services,
+		router:  router,
+		workers: workers,
+		auth:    auth,
 	}
 	handler.initRoutes()
 	return handler

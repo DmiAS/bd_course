@@ -7,10 +7,13 @@ import (
 )
 
 type IWorkerService interface {
-	CreateWorker(worker *models.Worker) (uuid.UUID, error)
-	UpdateWorker(worker *models.Worker) error
+	Create(worker *models.Worker) (uuid.UUID, error)
+	Update(worker *models.Worker) error
+	Delete(id uuid.UUID) error
+	Get(id uuid.UUID) (*models.Worker, error)
+	GetAll() (models.Workers, error)
 }
 
 type IAuthService interface {
-	CreateAuth(id uuid.UUID, login string) (string, error)
+	Create(id uuid.UUID, login string) (string, error)
 }

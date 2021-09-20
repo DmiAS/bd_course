@@ -10,6 +10,11 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
+func extractID(ctx *gin.Context) (uuid.UUID, error) {
+	sid := ctx.Param("id")
+	return uuid.FromBytes([]byte(sid))
+}
+
 func (h *Handler) createWorker(ctx *gin.Context) {
 	req := new(ds.CreateWorkerInput)
 	if err := ctx.BindJSON(req); err != nil {
@@ -19,13 +24,13 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 
 	worker, login := converters.ConvertWorkerCreateInput(req)
 
-	uuid, err := h.services.CreateWorker(worker)
+	id, err := h.workers.Create(worker)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	pass, err := h.services.CreateAuth(uuid, login)
+	pass, err := h.auth.Create(id, login)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -43,8 +48,7 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 		return
 	}
 
-	sid := ctx.Param("id")
-	id, err := uuid.FromBytes([]byte(sid))
+	id, err := extractID(ctx)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "invalid uuid")
 		return
@@ -52,7 +56,7 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 
 	worker := converters.ConvertWorkerUpdateInput(req, id)
 
-	if err := h.services.UpdateWorker(worker); err != nil {
+	if err := h.workers.Update(worker); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -61,9 +65,45 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 }
 
 func (h *Handler) getWorkers(ctx *gin.Context) {
+	workers, err := h.workers.GetAll()
+	if err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
 
+	resp := converters.ConvertWorkerGetAllOutput(workers)
+	ctx.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) getWorker(ctx *gin.Context) {
+	id, err := extractID(ctx)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "invalid uuid")
+		return
+	}
+
+	worker, err := h.workers.Get(id)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	resp := converters.ConvertWorkerGetOutput(worker)
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 func (h *Handler) deleteWorker(ctx *gin.Context) {
+	id, err := extractID(ctx)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "invalid uuid")
+		return
+	}
 
+	if err := h.workers.Delete(id); err != nil {
+		ctx.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.Status(http.StatusOK)
 }
