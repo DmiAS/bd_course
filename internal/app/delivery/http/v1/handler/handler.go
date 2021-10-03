@@ -12,18 +12,23 @@ type Handler struct {
 
 	wf *service.WorkerFactory
 	af *service.AuthFactory
+	cf *service.ClientFactory
 	//projects  service.IProjectService
 	//threads   service.IThreadService
 	//campaigns service.ICampaignService
 	//clients   service.IClientService
 }
 
-func NewHandler(wf *service.WorkerFactory, af *service.AuthFactory) *Handler {
+func NewHandler(
+	wf *service.WorkerFactory,
+	af *service.AuthFactory,
+	cf *service.ClientFactory) *Handler {
 	router := gin.Default()
 	handler := &Handler{
 		router: router,
 		wf:     wf,
 		af:     af,
+		cf:     cf,
 		//projects:  projects,
 		//threads:   threads,
 		//campaigns: campaigns,
@@ -51,14 +56,14 @@ func (h *Handler) initRoutes() {
 		auth.PUT("/:id", h.updateAuth)
 	}
 
-	//clients := h.router.Group("/clients")
-	//{
-	//	clients.POST("/", h.createClient)
-	//	clients.GET("/", h.getClients)
-	//	clients.GET("/", h.getClient)
-	//	clients.PUT("/:id", h.updateClient)
-	//	clients.DELETE("/:id", h.deleteClient)
-	//}
+	clients := h.router.Group("/clients")
+	{
+		clients.POST("/", h.createClient)
+		clients.GET("/", h.getClients)
+		clients.GET("/:id", h.getClient)
+		clients.PUT("/:id", h.updateClient)
+		clients.DELETE("/:id", h.deleteClient)
+	}
 
 	//	projects := h.router.Group("/projects")
 	//	{

@@ -71,6 +71,11 @@ func (s *Service) Update(info *models.Auth) error {
 	return auth.Update(encInfo)
 }
 
+func (s *Service) Delete(id uuid.UUID) error {
+	ar := s.unit.GetAuthRepository()
+	return ar.Delete(id)
+}
+
 func createAuthInfo(id uuid.UUID, firstName, lastName string) (*authInfo, error) {
 	salt, err := gen.GenerateRandomString(saltSize)
 	if err != nil {

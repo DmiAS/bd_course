@@ -15,4 +15,5 @@ type UnitOfWork interface {
 	WithTransaction(func(u UnitOfWork) error) error
 	GetWorkerRepository() repository.IWorkerRepository
 	GetAuthRepository() repository.IAuthRepository
+	GetClientRepository() repository.IClientRepository
 }

@@ -9,13 +9,13 @@ import (
 type IWorkerService interface {
 	Create(worker *models.Worker) (*models.Auth, error)
 	Update(worker *models.Worker) error
-	Delete(id uuid.UUID) error
 	Get(id uuid.UUID) (*models.Worker, error)
 	GetAll() models.Workers
 }
 
 type IAuthService interface {
 	Create(firstName, lastName, role string) (*models.Auth, error)
+	Delete(id uuid.UUID) error
 	Update(auth *models.Auth) error
 }
 
@@ -38,9 +38,8 @@ type ICampaignService interface {
 }
 
 type IClientService interface {
-	Create(client *models.User) (uuid.UUID, error)
-	Update(client *models.User) error
-	Delete(id uuid.UUID) error
-	Get(id uuid.UUID) (*models.User, error)
-	GetAll() (models.Users, error)
+	Create(client *models.Client) (*models.Auth, error)
+	Update(client *models.Client) error
+	Get(id uuid.UUID) (*models.Client, error)
+	GetAll() models.Clients
 }

@@ -30,24 +30,9 @@ func New() *Unit {
 func (u *Unit) WithRole(role Role) UnitOfWork {
 	db := getConnection(role)
 	return &Unit{
-		//wr: u.wr,
-		//ar: u.ar,
 		db: db,
 	}
 }
-
-//func (u *Unit) WithTransaction() UnitOfWork {
-//	//db := u.db.Session(&gorm.Session{SkipDefaultTransaction: true})
-//	//u.db.Transaction()
-//	tx := u.db.Begin()
-//	fmt.Println(tx.Error)
-//	return &Unit{
-//		//cr: u.cr,
-//		//wr: u.wr,
-//		//ar: u.ar,
-//		db: tx,
-//	}
-//}
 
 func (u *Unit) WithTransaction(f func(u UnitOfWork) error) error {
 	return u.db.Transaction(func(tx *gorm.DB) error {
@@ -59,9 +44,10 @@ func (u *Unit) WithTransaction(f func(u UnitOfWork) error) error {
 	})
 }
 
-//func (u Unit) GetClientRepository() repository.IClientRepository {
-//	return u.cr
-//}
+func (u Unit) GetClientRepository() repository.IClientRepository {
+	cr := orm.NewClientRepository(u.db)
+	return cr
+}
 
 func (u Unit) GetWorkerRepository() repository.IWorkerRepository {
 	wr := orm.NewWorkerRepository(u.db)

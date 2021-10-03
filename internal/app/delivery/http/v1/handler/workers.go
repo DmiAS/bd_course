@@ -83,8 +83,8 @@ func (h *Handler) deleteWorker(ctx *gin.Context) {
 		return
 	}
 
-	ws := h.wf.GetService(uwork.Admin)
-	if err := ws.Delete(id); err != nil {
+	as := h.af.GetService(uwork.Admin)
+	if err := as.Delete(id); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}

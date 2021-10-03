@@ -15,7 +15,8 @@ func main() {
 	unit := uwork.New()
 	wf := service.NewWorkerFactory(unit)
 	af := service.NewAuthFactory(unit)
-	router := handler.NewHandler(wf, af)
+	cf := service.NewClientFactory(unit)
+	router := handler.NewHandler(wf, af, cf)
 	cfg := config.Config{HTTP: config.HTTP{Port: "80"}}
 	server := http.NewServer(router, cfg)
 	go server.Start()
