@@ -1,11 +1,10 @@
 package http
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
 func extractID(ctx *gin.Context) (uuid.UUID, error) {

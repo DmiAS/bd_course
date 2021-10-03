@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"github.com/DmiAS/bd_course/internal/app/repository"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 )
 
 type Service struct {
-	rep repository.IAuthRepository
+	unit uwork.UnitOfWork
 }
 
-func NewService(rep repository.IAuthRepository) *Service {
-	return &Service{rep: rep}
+func NewService(unit uwork.UnitOfWork) *Service {
+	return &Service{unit: unit}
 }

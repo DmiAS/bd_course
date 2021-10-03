@@ -1,13 +1,13 @@
 package worker
 
 import (
-	"github.com/DmiAS/bd_course/internal/app/repository"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 )
 
 type Service struct {
-	rep repository.IWorkerRepository
+	unit uwork.UnitOfWork
 }
 
-func NewService(rep repository.IWorkerRepository) *Service {
-	return &Service{rep: rep}
+func NewService(u uwork.UnitOfWork) *Service {
+	return &Service{unit: u}
 }

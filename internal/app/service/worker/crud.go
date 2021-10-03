@@ -1,31 +1,48 @@
 package worker
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/service/auth"
 	"github.com/google/uuid"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
-func (s *Service) Create(worker *models.Worker) (uuid.UUID, error) {
-	id, err := s.rep.Create(worker)
+func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
+	unit := s.unit.WithTransaction()
+	aRep := auth.NewService(unit)
+	authInfo, err := aRep.CreateAuth(worker.FirstName, worker.LastName, models.WorkerRole)
 	if err != nil {
-		return uuid.UUID{}, err
+		unit.Rollback()
+		return nil, err
 	}
-	return id, nil
+
+	worker.ID = authInfo.ID
+	wRep := unit.GetWorkerRepository()
+	if err := wRep.Create(worker); err != nil {
+		unit.Rollback()
+		return nil, err
+	}
+
+	unit.Commit()
+	return authInfo, nil
 }
 
 func (s *Service) Update(worker *models.Worker) error {
-	return s.rep.Update(worker)
+	wRep := s.unit.GetWorkerRepository()
+	return wRep.Update(worker)
 }
 
 func (s *Service) Delete(id uuid.UUID) error {
-	return s.rep.Delete(id)
+	wRep := s.unit.GetWorkerRepository()
+	return wRep.Delete(id)
 }
 
 func (s *Service) Get(id uuid.UUID) (*models.Worker, error) {
-	return s.rep.Get(id)
+	wRep := s.unit.GetWorkerRepository()
+	return wRep.Get(id)
 }
 
 func (s *Service) GetAll() (models.Workers, error) {
-	return s.rep.GetAll()
+	wRep := s.unit.GetWorkerRepository()
+	return wRep.GetAll()
 }

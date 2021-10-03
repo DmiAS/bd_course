@@ -7,7 +7,7 @@ import (
 )
 
 type IWorkerRepository interface {
-	Create(worker *models.Worker) (uuid.UUID, error)
+	Create(worker *models.Worker) error
 	Update(worker *models.Worker) error
 	Delete(id uuid.UUID) error
 	Get(id uuid.UUID) (*models.Worker, error)
@@ -16,10 +16,11 @@ type IWorkerRepository interface {
 
 type IAuthRepository interface {
 	Create(auth *models.Auth) error
+	CreateIdRow(role string) (uuid.UUID, error)
 }
 
 type IProjectRepository interface {
-	Create(project *models.Project) (uuid.UUID, error)
+	Create(project *models.Project) error
 	Get(clientID uuid.UUID) (models.Projects, error)
 	Update(project *models.Project) error
 	Delete(id uuid.UUID) error

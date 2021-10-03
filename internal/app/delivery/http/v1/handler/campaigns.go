@@ -1,12 +1,11 @@
 package http
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
 func (h *Handler) getCampaigns(ctx *gin.Context) {

@@ -1,9 +1,9 @@
 package converters
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"github.com/google/uuid"
 
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 

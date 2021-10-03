@@ -1,12 +1,11 @@
 package http
 
 import (
+	converters2 "github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
 func (h *Handler) createThread(ctx *gin.Context) {
@@ -17,14 +16,14 @@ func (h *Handler) createThread(ctx *gin.Context) {
 		return
 	}
 
-	thread := converters.ConvertCreateThreadInput(req)
+	thread := converters2.ConvertCreateThreadInput(req)
 	id, err := h.threads.Create(thread)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	resp := converters.ConvertCreateProjectOutput(id, thread.Name)
+	resp := converters2.ConvertCreateProjectOutput(id, thread.Name)
 
 	ctx.JSON(http.StatusOK, resp)
 
@@ -43,7 +42,7 @@ func (h *Handler) getThreads(ctx *gin.Context) {
 		return
 	}
 
-	resp := converters.ConvertGetThreadsOutput(threads)
+	resp := converters2.ConvertGetThreadsOutput(threads)
 
 	ctx.JSON(http.StatusOK, resp)
 }
@@ -61,7 +60,7 @@ func (h *Handler) updateThread(ctx *gin.Context) {
 		return
 	}
 
-	thread := converters.ConvertUpdateThreadInput(req.Name, id)
+	thread := converters2.ConvertUpdateThreadInput(req.Name, id)
 
 	if err := h.threads.Update(thread); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())

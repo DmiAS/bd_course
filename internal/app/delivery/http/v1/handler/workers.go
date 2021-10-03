@@ -1,30 +1,22 @@
 package http
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
+	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/ds"
 )
 
 func (h *Handler) createWorker(ctx *gin.Context) {
-	req := new(ds.Worker)
+	req := &ds.Worker{}
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	worker := converters.ConvertWorkerInput(req)
-
-	id, err := h.workers.Create(worker)
-	if err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	resp, err := h.registerUser(id, req.FirstName, req.LastName)
+	resp, err := h.workers.Create(worker)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
@@ -34,8 +26,7 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 }
 
 func (h *Handler) updateWorker(ctx *gin.Context) {
-	req := new(ds.Worker)
-
+	req := &ds.Worker{}
 	if err := ctx.BindJSON(req); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
@@ -48,7 +39,6 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 	}
 
 	worker := converters.ConvertUpdateWorkerInput(req, id)
-
 	if err := h.workers.Update(worker); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
