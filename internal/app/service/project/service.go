@@ -1,11 +1,13 @@
 package project
 
-import "github.com/DmiAS/bd_course/internal/app/repository"
+import (
+	"github.com/DmiAS/bd_course/internal/app/uwork"
+)
 
 type Service struct {
-	rep repository.IProjectRepository
+	unit uwork.UnitOfWork
 }
 
-func NewService(rep repository.IProjectRepository) *Service {
-	return &Service{rep: rep}
+func NewService(unit uwork.UnitOfWork) *Service {
+	return &Service{unit: unit}
 }

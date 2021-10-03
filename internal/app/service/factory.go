@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/DmiAS/bd_course/internal/app/service/auth"
 	"github.com/DmiAS/bd_course/internal/app/service/clients"
+	"github.com/DmiAS/bd_course/internal/app/service/project"
 	"github.com/DmiAS/bd_course/internal/app/service/worker"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 )
@@ -41,4 +42,16 @@ func NewClientFactory(u uwork.UnitOfWork) *ClientFactory {
 func (c ClientFactory) GetService(role uwork.Role) IClientService {
 	unit := c.unit.WithRole(role)
 	return clients.NewService(unit)
+}
+
+type ProjectFactory struct {
+	unit uwork.UnitOfWork
+}
+
+func NewProjectFactory(u uwork.UnitOfWork) *ProjectFactory {
+	return &ProjectFactory{unit: u}
+}
+func (p ProjectFactory) GetService(role uwork.Role) IProjectService {
+	unit := p.unit.WithRole(role)
+	return project.NewService(unit)
 }

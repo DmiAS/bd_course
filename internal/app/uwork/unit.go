@@ -59,6 +59,11 @@ func (u Unit) GetAuthRepository() repository.IAuthRepository {
 	return ar
 }
 
+func (u Unit) GetProjectRepository() repository.IProjectRepository {
+	pr := orm.NewProjectRepository(u.db)
+	return pr
+}
+
 func getConnection(role Role) *gorm.DB {
 	//conn, ok := u.conns[role]
 	//if !ok{

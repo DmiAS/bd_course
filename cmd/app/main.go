@@ -16,7 +16,8 @@ func main() {
 	wf := service.NewWorkerFactory(unit)
 	af := service.NewAuthFactory(unit)
 	cf := service.NewClientFactory(unit)
-	router := handler.NewHandler(wf, af, cf)
+	pf := service.NewProjectFactory(unit)
+	router := handler.NewHandler(wf, af, cf, pf)
 	cfg := config.Config{HTTP: config.HTTP{Port: "80"}}
 	server := http.NewServer(router, cfg)
 	go server.Start()

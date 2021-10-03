@@ -13,6 +13,13 @@ type IWorkerService interface {
 	GetAll() models.Workers
 }
 
+type IClientService interface {
+	Create(client *models.Client) (*models.Auth, error)
+	Update(client *models.Client) error
+	Get(id uuid.UUID) (*models.Client, error)
+	GetAll() models.Clients
+}
+
 type IAuthService interface {
 	Create(firstName, lastName, role string) (*models.Auth, error)
 	Delete(id uuid.UUID) error
@@ -21,7 +28,8 @@ type IAuthService interface {
 
 type IProjectService interface {
 	Create(project *models.Project) (uuid.UUID, error)
-	Get(clientID uuid.UUID) (models.Projects, error)
+	Get(clientID uuid.UUID) (*models.Project, error)
+	GetAll() models.Projects
 	Update(project *models.Project) error
 	Delete(id uuid.UUID) error
 }
@@ -31,15 +39,4 @@ type IThreadService interface {
 	Get(projectID uuid.UUID) (models.Threads, error)
 	Update(thread *models.Thread) error
 	Delete(id uuid.UUID) error
-}
-
-type ICampaignService interface {
-	Update(camp *models.Campaign) error
-}
-
-type IClientService interface {
-	Create(client *models.Client) (*models.Auth, error)
-	Update(client *models.Client) error
-	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() models.Clients
 }

@@ -13,6 +13,7 @@ type Handler struct {
 	wf *service.WorkerFactory
 	af *service.AuthFactory
 	cf *service.ClientFactory
+	pf *service.ProjectFactory
 	//projects  service.IProjectService
 	//threads   service.IThreadService
 	//campaigns service.ICampaignService
@@ -22,7 +23,8 @@ type Handler struct {
 func NewHandler(
 	wf *service.WorkerFactory,
 	af *service.AuthFactory,
-	cf *service.ClientFactory) *Handler {
+	cf *service.ClientFactory,
+	pf *service.ProjectFactory) *Handler {
 	router := gin.Default()
 	handler := &Handler{
 		router: router,
@@ -65,13 +67,14 @@ func (h *Handler) initRoutes() {
 		clients.DELETE("/:id", h.deleteClient)
 	}
 
-	//	projects := h.router.Group("/projects")
-	//	{
-	//		projects.POST("/", h.createProject)
-	//		projects.GET("/", h.getProjects)
-	//		projects.PUT("/:id", h.updateProject)
-	//		projects.DELETE("/:id", h.deleteProject)
-	//	}
+	projects := h.router.Group("/projects")
+	{
+		projects.POST("/", h.createProject)
+		projects.GET("/", h.getProjects)
+		projects.GET("/:id", h.getProject)
+		projects.PUT("/:id", h.updateProject)
+		projects.DELETE("/:id", h.deleteProject)
+	}
 	//
 	//	threads := h.router.Group("/threads")
 	//	{
