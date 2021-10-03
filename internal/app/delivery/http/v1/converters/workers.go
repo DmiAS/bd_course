@@ -27,6 +27,8 @@ func ConvertUpdateWorkerInput(req *ds.Worker, id uuid.UUID) *models.Worker {
 			VkLink:    req.VkLink,
 			TgLink:    req.TgLink,
 		},
+		Grade:    req.Grade,
+		Position: req.Position,
 	}
 }
 

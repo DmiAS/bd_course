@@ -7,5 +7,5 @@ import (
 
 func extractID(ctx *gin.Context) (uuid.UUID, error) {
 	sid := ctx.Param("id")
-	return uuid.FromBytes([]byte(sid))
+	return uuid.Parse(sid)
 }
