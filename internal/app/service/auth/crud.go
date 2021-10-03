@@ -51,6 +51,26 @@ func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error)
 	return info, nil
 }
 
+func (s *Service) Update(info *models.Auth) error {
+	salt, err := gen.GenerateRandomString(saltSize)
+	if err != nil {
+		return err
+	}
+
+	encInfo, err := encryptAuthInfo(&authInfo{
+		login:    info.Login,
+		password: []byte(info.Password),
+		salt:     salt,
+		id:       info.UserID,
+	})
+	if err != nil {
+		return err
+	}
+
+	auth := s.unit.GetAuthRepository()
+	return auth.Update(encInfo)
+}
+
 func createAuthInfo(id uuid.UUID, firstName, lastName string) (*authInfo, error) {
 	salt, err := gen.GenerateRandomString(saltSize)
 	if err != nil {

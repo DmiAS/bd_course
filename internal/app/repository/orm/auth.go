@@ -33,6 +33,6 @@ func (a AuthRepository) Delete(id uuid.UUID) error {
 	return a.db.Delete(&models.IDs{ID: id}).Error
 }
 
-func (a AuthRepository) UpdateAuth(info *models.Auth) error {
-	return a.db.Updates(info).Error
+func (a AuthRepository) Update(info *models.Auth) error {
+	return a.db.Where("user_id = ?", info.UserID).Updates(info).Error
 }

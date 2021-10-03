@@ -16,6 +16,7 @@ type IWorkerRepository interface {
 type IAuthRepository interface {
 	Create(auth *models.Auth) error
 	CreateIdRow(role string) (uuid.UUID, error)
+	Update(auth *models.Auth) error
 	Delete(id uuid.UUID) error
 }
 

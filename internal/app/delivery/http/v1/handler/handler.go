@@ -46,6 +46,11 @@ func (h *Handler) initRoutes() {
 		workers.DELETE("/:id", h.deleteWorker)
 	}
 
+	auth := h.router.Group("/auth")
+	{
+		auth.PUT("/:id", h.updateAuth)
+	}
+
 	//clients := h.router.Group("/clients")
 	//{
 	//	clients.POST("/", h.createClient)

@@ -16,6 +16,7 @@ type IWorkerService interface {
 
 type IAuthService interface {
 	Create(firstName, lastName, role string) (*models.Auth, error)
+	Update(auth *models.Auth) error
 }
 
 type IProjectService interface {
