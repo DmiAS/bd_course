@@ -1,8 +1,9 @@
-package http
+package handler
 
 import (
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,8 @@ func (h *Handler) createWorker(ctx *gin.Context) {
 	}
 
 	worker := converters.ConvertWorkerInput(req)
-	resp, err := h.workers.Create(worker)
+	ws := h.wf.GetService(uwork.Admin)
+	resp, err := ws.Create(worker)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
@@ -39,7 +41,8 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 	}
 
 	worker := converters.ConvertUpdateWorkerInput(req, id)
-	if err := h.workers.Update(worker); err != nil {
+	ws := h.wf.GetService(uwork.Admin)
+	if err := ws.Update(worker); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -48,12 +51,8 @@ func (h *Handler) updateWorker(ctx *gin.Context) {
 }
 
 func (h *Handler) getWorkers(ctx *gin.Context) {
-	workers, err := h.workers.GetAll()
-	if err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
+	ws := h.wf.GetService(uwork.Admin)
+	workers := ws.GetAll()
 	resp := converters.ConvertGetAllWorkerOutput(workers)
 	ctx.JSON(http.StatusOK, resp)
 }
@@ -65,7 +64,8 @@ func (h *Handler) getWorker(ctx *gin.Context) {
 		return
 	}
 
-	worker, err := h.workers.Get(id)
+	ws := h.wf.GetService(uwork.Admin)
+	worker, err := ws.Get(id)
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 		return
@@ -83,7 +83,8 @@ func (h *Handler) deleteWorker(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.workers.Delete(id); err != nil {
+	ws := h.wf.GetService(uwork.Admin)
+	if err := ws.Delete(id); err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
 	}

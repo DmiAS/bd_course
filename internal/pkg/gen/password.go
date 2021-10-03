@@ -47,12 +47,12 @@ func Login(firstName, lastName string) string {
 }
 
 func GenerateRandomString(size int) ([]byte, error) {
-	salt := make([]byte, size)
-	if _, err := rand.Read(salt); err != nil {
+	str := make([]byte, size)
+	if _, err := rand.Read(str); err != nil {
 		return nil, err
 	}
 
-	return salt, nil
+	return str, nil
 }
 
 func PasswordWithSalt(password, salt []byte) (string, error) {

@@ -15,7 +15,6 @@ type UnitOfWork interface {
 	WithTransaction() UnitOfWork
 	Commit()
 	Rollback()
-	GetClientRepository() repository.IClientRepository
 	GetWorkerRepository() repository.IWorkerRepository
 	GetAuthRepository() repository.IAuthRepository
 }

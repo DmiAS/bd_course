@@ -2,44 +2,46 @@ package uwork
 
 import (
 	"github.com/DmiAS/bd_course/internal/app/repository"
+	"github.com/DmiAS/bd_course/internal/app/repository/orm"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
 )
 
-type Unit struct {
-	cr repository.IClientRepository
-	wr repository.IWorkerRepository
-	ar repository.IAuthRepository
+func init() {
+	dsn := "host=localhost user=postgres password=password dbname=agency sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	conn = db
+}
 
+var conn *gorm.DB
+
+type Unit struct {
 	db *gorm.DB
 }
 
-func New(
-	cr repository.IClientRepository,
-	wr repository.IWorkerRepository,
-	ar repository.IAuthRepository,
-) *Unit {
-	return &Unit{cr: cr, wr: wr, ar: ar}
+func New() *Unit {
+	return &Unit{}
 }
 
-func (u *Unit) WithRole(role Role) (*Unit, error) {
-	db, err := getConnection(role)
-	if err != nil {
-		return nil, err
-	}
+func (u *Unit) WithRole(role Role) UnitOfWork {
+	db := getConnection(role)
 	return &Unit{
-		cr: u.cr,
-		wr: u.wr,
-		ar: u.ar,
+		//wr: u.wr,
+		//ar: u.ar,
 		db: db,
-	}, nil
+	}
 }
 
-func (u *Unit) WithTransaction() *Unit {
+func (u *Unit) WithTransaction() UnitOfWork {
 	tx := u.db.Begin()
 	return &Unit{
-		cr: u.cr,
-		wr: u.wr,
-		ar: u.ar,
+		//cr: u.cr,
+		//wr: u.wr,
+		//ar: u.ar,
 		db: tx,
 	}
 }
@@ -52,23 +54,25 @@ func (u Unit) Rollback() {
 	u.db.Rollback()
 }
 
-func (u Unit) GetClientRepository() repository.IClientRepository {
-	return u.cr
-}
+//func (u Unit) GetClientRepository() repository.IClientRepository {
+//	return u.cr
+//}
 
 func (u Unit) GetWorkerRepository() repository.IWorkerRepository {
-	return u.wr
+	wr := orm.NewWorkerRepository(conn)
+	return wr
 }
 
 func (u Unit) GetAuthRepository() repository.IAuthRepository {
-	return u.ar
+	ar := orm.NewAuthRepository(conn)
+	return ar
 }
 
-func getConnection(role Role) (*gorm.DB, error) {
+func getConnection(role Role) *gorm.DB {
 	//conn, ok := u.conns[role]
 	//if !ok{
 	//	return nil, errors.New("invalid access role")
 	//}
 	//return conn, nil
-	return nil, nil
+	return conn
 }

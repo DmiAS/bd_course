@@ -17,5 +17,5 @@ type Auth struct {
 	Login    string
 	Password string
 	Salt     string
-	ID       uuid.UUID
+	UserID   uuid.UUID
 }

@@ -7,15 +7,15 @@ import (
 )
 
 type IWorkerService interface {
-	Create(worker *models.Worker) (uuid.UUID, error)
+	Create(worker *models.Worker) (*models.Auth, error)
 	Update(worker *models.Worker) error
 	Delete(id uuid.UUID) error
 	Get(id uuid.UUID) (*models.Worker, error)
-	GetAll() (models.Workers, error)
+	GetAll() models.Workers
 }
 
 type IAuthService interface {
-	Create(id uuid.UUID, firstName, lastName string) (*models.Auth, error)
+	Create(firstName, lastName, role string) (*models.Auth, error)
 }
 
 type IProjectService interface {

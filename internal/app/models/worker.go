@@ -1,13 +1,8 @@
 package models
 
-import (
-	"github.com/lib/pq"
-)
-
 type Worker struct {
-	User
+	User     User `gorm:"embedded"`
 	Grade    string
 	Position string
-	Cabs     pq.Int64Array
 }
 type Workers []Worker

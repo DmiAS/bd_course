@@ -9,14 +9,14 @@ import (
 type IWorkerRepository interface {
 	Create(worker *models.Worker) error
 	Update(worker *models.Worker) error
-	Delete(id uuid.UUID) error
 	Get(id uuid.UUID) (*models.Worker, error)
-	GetAll() (models.Workers, error)
+	GetAll() models.Workers
 }
 
 type IAuthRepository interface {
 	Create(auth *models.Auth) error
 	CreateIdRow(role string) (uuid.UUID, error)
+	Delete(id uuid.UUID) error
 }
 
 type IProjectRepository interface {
@@ -38,10 +38,10 @@ type ICampaignRepository interface {
 	UpdateThread(threadID uuid.UUID) error
 }
 
-type IClientRepository interface {
-	Create(client *models.Client) (uuid.UUID, error)
-	Update(client *models.Client) error
-	Delete(id uuid.UUID) error
-	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() (models.Clients, error)
-}
+//type IClientRepository interface {
+//	Create(client *models.Client) (uuid.UUID, error)
+//	Update(client *models.Client) error
+//	Delete(id uuid.UUID) error
+//	Get(id uuid.UUID) (*models.Client, error)
+//	GetAll() (models.Clients, error)
+//}

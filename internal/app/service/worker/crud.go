@@ -10,13 +10,13 @@ import (
 func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
 	unit := s.unit.WithTransaction()
 	aRep := auth.NewService(unit)
-	authInfo, err := aRep.CreateAuth(worker.FirstName, worker.LastName, models.WorkerRole)
+	authInfo, err := aRep.Create(worker.User.FirstName, worker.User.LastName, models.WorkerRole)
 	if err != nil {
 		unit.Rollback()
 		return nil, err
 	}
 
-	worker.ID = authInfo.ID
+	worker.User.ID = authInfo.UserID
 	wRep := unit.GetWorkerRepository()
 	if err := wRep.Create(worker); err != nil {
 		unit.Rollback()
@@ -33,8 +33,8 @@ func (s *Service) Update(worker *models.Worker) error {
 }
 
 func (s *Service) Delete(id uuid.UUID) error {
-	wRep := s.unit.GetWorkerRepository()
-	return wRep.Delete(id)
+	aRep := s.unit.GetAuthRepository()
+	return aRep.Delete(id)
 }
 
 func (s *Service) Get(id uuid.UUID) (*models.Worker, error) {
@@ -42,7 +42,7 @@ func (s *Service) Get(id uuid.UUID) (*models.Worker, error) {
 	return wRep.Get(id)
 }
 
-func (s *Service) GetAll() (models.Workers, error) {
+func (s *Service) GetAll() models.Workers {
 	wRep := s.unit.GetWorkerRepository()
 	return wRep.GetAll()
 }
