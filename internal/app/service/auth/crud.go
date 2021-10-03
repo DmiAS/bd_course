@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/base64"
 	"github.com/DmiAS/bd_course/internal/app/models"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/DmiAS/bd_course/internal/pkg/gen"
 	"github.com/google/uuid"
 )
@@ -18,36 +19,36 @@ type authInfo struct {
 }
 
 func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error) {
-	unit := s.unit.WithTransaction()
-	auth := unit.GetAuthRepository()
+	var info *models.Auth
+	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
+		auth := u.GetAuthRepository()
+		id, err := auth.CreateIdRow(role)
+		if err != nil {
+			return err
+		}
 
-	id, err := auth.CreateIdRow(role)
-	if err != nil {
-		unit.Rollback()
-		return nil, err
-	}
+		authInfo, err := createAuthInfo(id, firstName, lastName)
+		if err != nil {
+			return err
+		}
 
-	authInfo, err := createAuthInfo(id, firstName, lastName)
-	if err != nil {
-		unit.Rollback()
+		encInfo, err := encryptAuthInfo(authInfo)
+		if err != nil {
+			return err
+		}
+		if err := auth.Create(encInfo); err != nil {
+			return err
+		}
+		info = &models.Auth{
+			Login:    authInfo.login,
+			Password: bytesToString(authInfo.password),
+			UserID:   id,
+		}
+		return nil
+	}); err != nil {
 		return nil, err
 	}
-
-	encInfo, err := encryptAuthInfo(authInfo)
-	if err != nil {
-		unit.Rollback()
-		return nil, err
-	}
-	if err := auth.Create(encInfo); err != nil {
-		unit.Rollback()
-		return nil, err
-	}
-	unit.Commit()
-	return &models.Auth{
-		Login:    authInfo.login,
-		Password: bytesToString(authInfo.password),
-		UserID:   id,
-	}, nil
+	return info, nil
 }
 
 func createAuthInfo(id uuid.UUID, firstName, lastName string) (*authInfo, error) {

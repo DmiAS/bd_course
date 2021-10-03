@@ -2,28 +2,31 @@ package worker
 
 import (
 	"github.com/DmiAS/bd_course/internal/app/service/auth"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/google/uuid"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
 func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
-	unit := s.unit.WithTransaction()
-	aRep := auth.NewService(unit)
-	authInfo, err := aRep.Create(worker.User.FirstName, worker.User.LastName, models.WorkerRole)
-	if err != nil {
-		unit.Rollback()
+	var authInfo *models.Auth
+	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
+		aServ := auth.NewService(u)
+		var err error
+		authInfo, err = aServ.Create(worker.User.FirstName, worker.User.LastName, models.WorkerRole)
+		if err != nil {
+			return err
+		}
+
+		worker.User.ID = authInfo.UserID
+		wRep := u.GetWorkerRepository()
+		if err := wRep.Create(worker); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return nil, err
 	}
-
-	worker.User.ID = authInfo.UserID
-	wRep := unit.GetWorkerRepository()
-	if err := wRep.Create(worker); err != nil {
-		unit.Rollback()
-		return nil, err
-	}
-
-	unit.Commit()
 	return authInfo, nil
 }
 

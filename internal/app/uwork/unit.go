@@ -10,7 +10,7 @@ import (
 
 func init() {
 	dsn := "host=localhost user=postgres password=password dbname=agency sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{SkipDefaultTransaction: false})
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -36,22 +36,27 @@ func (u *Unit) WithRole(role Role) UnitOfWork {
 	}
 }
 
-func (u *Unit) WithTransaction() UnitOfWork {
-	tx := u.db.Begin()
-	return &Unit{
-		//cr: u.cr,
-		//wr: u.wr,
-		//ar: u.ar,
-		db: tx,
-	}
-}
+//func (u *Unit) WithTransaction() UnitOfWork {
+//	//db := u.db.Session(&gorm.Session{SkipDefaultTransaction: true})
+//	//u.db.Transaction()
+//	tx := u.db.Begin()
+//	fmt.Println(tx.Error)
+//	return &Unit{
+//		//cr: u.cr,
+//		//wr: u.wr,
+//		//ar: u.ar,
+//		db: tx,
+//	}
+//}
 
-func (u Unit) Commit() {
-	u.db.Commit()
-}
-
-func (u Unit) Rollback() {
-	u.db.Rollback()
+func (u *Unit) WithTransaction(f func(u UnitOfWork) error) error {
+	return u.db.Transaction(func(tx *gorm.DB) error {
+		un := &Unit{db: tx}
+		if err := f(un); err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 //func (u Unit) GetClientRepository() repository.IClientRepository {
@@ -59,12 +64,12 @@ func (u Unit) Rollback() {
 //}
 
 func (u Unit) GetWorkerRepository() repository.IWorkerRepository {
-	wr := orm.NewWorkerRepository(conn)
+	wr := orm.NewWorkerRepository(u.db)
 	return wr
 }
 
 func (u Unit) GetAuthRepository() repository.IAuthRepository {
-	ar := orm.NewAuthRepository(conn)
+	ar := orm.NewAuthRepository(u.db)
 	return ar
 }
 

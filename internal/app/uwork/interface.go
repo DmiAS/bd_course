@@ -12,9 +12,7 @@ const (
 
 type UnitOfWork interface {
 	WithRole(role Role) UnitOfWork
-	WithTransaction() UnitOfWork
-	Commit()
-	Rollback()
+	WithTransaction(func(u UnitOfWork) error) error
 	GetWorkerRepository() repository.IWorkerRepository
 	GetAuthRepository() repository.IAuthRepository
 }
