@@ -28,7 +28,7 @@ type IAuthService interface {
 
 type IProjectService interface {
 	Create(project *models.Project) (uuid.UUID, error)
-	Get(clientID uuid.UUID) (*models.Project, error)
+	Get(clientID, projectID uuid.UUID) (*models.Project, error)
 	GetAll() models.Projects
 	Update(project *models.Project) error
 	Delete(id uuid.UUID) error

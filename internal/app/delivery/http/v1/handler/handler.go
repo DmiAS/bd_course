@@ -1,14 +1,15 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/DmiAS/bd_course/internal/app/service"
 )
 
 type Handler struct {
-	router *gin.Engine
+	router *echo.Echo
 
 	wf *service.WorkerFactory
 	af *service.AuthFactory
@@ -25,7 +26,7 @@ func NewHandler(
 	af *service.AuthFactory,
 	cf *service.ClientFactory,
 	pf *service.ProjectFactory) *Handler {
-	router := gin.Default()
+	router := echo.New()
 	handler := &Handler{
 		router: router,
 		wf:     wf,
@@ -65,15 +66,22 @@ func (h *Handler) initRoutes() {
 		clients.GET("/:id", h.getClient)
 		clients.PUT("/:id", h.updateClient)
 		clients.DELETE("/:id", h.deleteClient)
+
+		//projects
+		//clients.GET("/:client_id/projects", nil)
+		//clients.POST("/:client_id/projects", nil)
+		//clients.GET("/:client_id/projects/:id", nil)
+		//clients.PUT("/:client_id/projects/:id", nil)
+		//clients.DELETE("/:client_id/projects/:id", nil)
 	}
 
-	projects := h.router.Group("/projects")
+	projects := clients.Group("/")
 	{
-		projects.POST("/", h.createProject)
-		projects.GET("/", h.getProjects)
-		projects.GET("/:id", h.getProject)
-		projects.PUT("/:id", h.updateProject)
-		projects.DELETE("/:id", h.deleteProject)
+		projects.GET("/:client_id/projects", h.getProject)
+		projects.POST("/:client_id/projects", h.createProject)
+		projects.GET("/:client_id/projects/:id", nil)
+		projects.PUT("/:client_id/projects/:id", nil)
+		projects.DELETE("/:client_id/projects/:id", nil)
 	}
 	//
 	//	threads := h.router.Group("/threads")

@@ -15,7 +15,7 @@ func ConvertCreateProjectInput(req *ds.CreateProjectInput) *models.Project {
 	}
 }
 
-func ConvertCreateProjectOutput(id uuid.UUID, name string) *ds.CreateProjectOutput {
+func ConvertCreateProjectOutput(project) *ds.CreateProjectOutput {
 	return &ds.CreateProjectOutput{
 		ds.Project{
 			ID:   id,

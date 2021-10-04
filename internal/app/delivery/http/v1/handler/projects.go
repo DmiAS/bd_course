@@ -1,13 +1,43 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
-	"net/http"
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 
 	"github.com/gin-gonic/gin"
 )
+
+type info struct {
+	clientID  uuid.UUID
+	projectID uuid.UUID
+}
+
+func (i *info) bind(ctx echo.Context) error {
+	clientID := ctx.Param("client_id")
+	if clientID != "" {
+		id, err := uuid.Parse(clientID)
+		if err != nil {
+			return err
+		}
+		i.clientID = id
+	}
+
+	projectID := ctx.Param("id")
+	if projectID != "" {
+		id, err := uuid.Parse(projectID)
+		if err != nil {
+			return err
+		}
+		i.projectID = id
+	}
+
+	return nil
+}
 
 func (h *Handler) createProject(ctx *gin.Context) {
 	req := new(ds.CreateProjectInput)
@@ -31,22 +61,16 @@ func (h *Handler) createProject(ctx *gin.Context) {
 
 }
 
-func (h *Handler) getProject(ctx *gin.Context) {
-	//id, err := extractID(ctx)
-	//if err != nil {
-	//	ctx.String(http.StatusBadRequest, err.Error())
-	//	return
-	//}
-	//
-	//ps := h.pf.GetService(uwork.Admin)
-	//projects, err := ps.GetAll(id)
-	//if err != nil {
-	//	ctx.String(http.StatusInternalServerError, err.Error())
-	//	return
-	//}
-	//
-	//resp := converters.ConvertPro
-
+func (h *Handler) getProject(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+	ps := h.pf.GetService(uwork.Admin)
+	project, err := ps.Get(data.clientID, data.projectID)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
 	//ctx.JSON(http.StatusOK, resp)
 }
 
@@ -59,7 +83,7 @@ func (h *Handler) getProjects(ctx *gin.Context) {
 }
 
 func (h *Handler) updateProject(ctx *gin.Context) {
-	id, err := extractID(ctx)
+	id, err := extractID(nil)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return
@@ -80,7 +104,7 @@ func (h *Handler) updateProject(ctx *gin.Context) {
 }
 
 func (h *Handler) deleteProject(ctx *gin.Context) {
-	id, err := extractID(ctx)
+	id, err := extractID(nil)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, err.Error())
 		return

@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
 
-func extractID(ctx *gin.Context) (uuid.UUID, error) {
+func extractID(ctx echo.Context) (uuid.UUID, error) {
 	sid := ctx.Param("id")
 	return uuid.Parse(sid)
 }
