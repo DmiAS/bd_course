@@ -1,25 +1,13 @@
 package handler
 
-//
-//import (
-//	converters2 "github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
-//	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
-//	"net/http"
-//
-//	"github.com/gin-gonic/gin"
-//)
-//
-//func (h *Handler) createThread(ctx *gin.Context) {
-//	req := new(ds.CreateThreadInput)
-//
-//	if err := ctx.BindJSON(req); err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
+//func (h *Handler) createThread(ctx echo.Context) error{
+//	req := &info{}
+//	if err := req.bind(ctx); err != nil {
+//		return ctx.String(http.StatusBadRequest, err.Error())
 //	}
 //
-//	thread := converters2.ConvertCreateThreadInput(req)
-//	id, err := h.threads.Create(thread)
-//	if err != nil {
+//
+//	if err := h.threads.Create(thread); err != nil {
 //		ctx.String(http.StatusInternalServerError, err.Error())
 //		return
 //	}
@@ -29,7 +17,7 @@ package handler
 //	ctx.JSON(http.StatusOK, resp)
 //
 //}
-//
+
 //func (h *Handler) getThreads(ctx *gin.Context) {
 //	id, err := extractID(ctx)
 //	if err != nil {

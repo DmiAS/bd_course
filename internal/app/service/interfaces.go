@@ -6,6 +6,12 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
+type IAuthService interface {
+	Create(firstName, lastName, role string) (*models.Auth, error)
+	Delete(id uuid.UUID) error
+	Update(auth *models.Auth) error
+}
+
 type IWorkerService interface {
 	Create(worker *models.Worker) (*models.Auth, error)
 	Update(worker *models.Worker) error
@@ -20,12 +26,6 @@ type IClientService interface {
 	GetAll() *models.ClientsList
 }
 
-type IAuthService interface {
-	Create(firstName, lastName, role string) (*models.Auth, error)
-	Delete(id uuid.UUID) error
-	Update(auth *models.Auth) error
-}
-
 type IProjectService interface {
 	Create(project *models.Project) error
 	Get(clientID, projectID uuid.UUID) (*models.Project, error)
@@ -35,8 +35,9 @@ type IProjectService interface {
 }
 
 type IThreadService interface {
-	Create(thread *models.Thread) (uuid.UUID, error)
-	Get(projectID uuid.UUID) (models.Threads, error)
+	Create(thread *models.Thread) error
+	Get(projectID, threadID uuid.UUID) (*models.Thread, error)
+	GetAll(projectID uuid.UUID) *models.ThreadsList
 	Update(thread *models.Thread) error
-	Delete(id uuid.UUID) error
+	Delete(projectID, threadID uuid.UUID) error
 }

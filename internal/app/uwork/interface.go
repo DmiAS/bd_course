@@ -17,4 +17,5 @@ type UnitOfWork interface {
 	GetAuthRepository() repository.IAuthRepository
 	GetClientRepository() repository.IClientRepository
 	GetProjectRepository() repository.IProjectRepository
+	GetThreadsRepository() repository.IThreadRepository
 }

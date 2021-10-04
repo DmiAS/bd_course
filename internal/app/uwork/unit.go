@@ -1,11 +1,12 @@
 package uwork
 
 import (
+	"log"
+
 	"github.com/DmiAS/bd_course/internal/app/repository"
 	"github.com/DmiAS/bd_course/internal/app/repository/orm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 func init() {
@@ -62,6 +63,11 @@ func (u Unit) GetAuthRepository() repository.IAuthRepository {
 func (u Unit) GetProjectRepository() repository.IProjectRepository {
 	pr := orm.NewProjectRepository(u.db)
 	return pr
+}
+
+func (u Unit) GetThreadsRepository() repository.IThreadRepository {
+	tr := orm.NewThreadRepository(u.db)
+	return tr
 }
 
 func getConnection(role Role) *gorm.DB {

@@ -29,10 +29,11 @@ type IProjectRepository interface {
 }
 
 type IThreadRepository interface {
-	Create(thread *models.Thread) (uuid.UUID, error)
-	Get(projectID uuid.UUID) (models.Threads, error)
+	Create(thread *models.Thread) error
+	Get(projectID, threadID uuid.UUID) (*models.Thread, error)
+	GetAll(projectID uuid.UUID) models.Threads
 	Update(thread *models.Thread) error
-	Delete(id uuid.UUID) error
+	Delete(projectID, threadID uuid.UUID) error
 }
 
 type ICampaignRepository interface {

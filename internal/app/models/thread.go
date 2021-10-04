@@ -8,3 +8,15 @@ type Thread struct {
 	Name      string
 }
 type Threads []Thread
+
+type ThreadsList struct {
+	Amount int `json:"amount"`
+	Threads
+}
+
+func NewThreadsList(ps Threads) *ThreadsList {
+	return &ThreadsList{
+		Amount:  len(ps),
+		Threads: ps,
+	}
+}

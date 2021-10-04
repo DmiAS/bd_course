@@ -75,23 +75,23 @@ func (h *Handler) initRoutes() {
 		//clients.DELETE("/:client_id/projects/:id", nil)
 	}
 
-	projects := clients.Group("/")
+	projects := clients.Group("/:client_id/projects")
 	{
-		projects.GET("/:client_id/projects", h.getProjects)
-		projects.POST("/:client_id/projects", h.createProject)
-		projects.GET("/:client_id/projects/:id", h.getProject)
-		projects.PUT("/:client_id/projects/:id", h.updateProject)
-		projects.DELETE("/:client_id/projects/:id", h.deleteProject)
+		projects.GET("/", h.getProjects)
+		projects.POST("/", h.createProject)
+		projects.GET("/:id", h.getProject)
+		projects.PUT("/:id", h.updateProject)
+		projects.DELETE("/:id", h.deleteProject)
 	}
-	//
-	//	threads := h.router.Group("/threads")
-	//	{
-	//		threads.POST("/", h.createThread)
-	//		threads.GET("/", h.getThreads)
-	//		threads.PUT("/:id", h.updateThread)
-	//		threads.DELETE("/:id", h.deleteThread)
-	//	}
-	//
+
+	threads := h.router.Group("/projects/:project_id/threads")
+	{
+		threads.GET("/", h.getProjects)
+		threads.POST("/", h.createProject)
+		threads.GET("/:id", h.getProject)
+		threads.PUT("/:id", h.updateProject)
+		threads.DELETE("/:id", h.deleteProject)
+	}
 	//	camps := h.router.Group("/campaigns")
 	//	{
 	//		camps.GET("/", h.getCampaigns)
