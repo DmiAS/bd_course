@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/labstack/echo/v4"
 
@@ -10,12 +9,11 @@ import (
 )
 
 func (h *Handler) createWorker(ctx echo.Context) error {
-	req := &ds.Worker{}
-	if err := ctx.Bind(req); err != nil {
+	worker := &models.Worker{}
+	if err := ctx.Bind(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	worker := converters.ConvertWorkerInput(req)
 	ws := h.wf.GetService(uwork.Admin)
 	resp, err := ws.Create(worker)
 	if err != nil {
@@ -26,8 +24,8 @@ func (h *Handler) createWorker(ctx echo.Context) error {
 }
 
 func (h *Handler) updateWorker(ctx echo.Context) error {
-	req := &ds.Worker{}
-	if err := ctx.Bind(req); err != nil {
+	worker := &models.Worker{}
+	if err := ctx.Bind(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -36,8 +34,8 @@ func (h *Handler) updateWorker(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
 
-	worker := converters.ConvertUpdateWorkerInput(req, id)
 	ws := h.wf.GetService(uwork.Admin)
+	worker.User.ID = id
 	if err := ws.Update(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
@@ -48,8 +46,7 @@ func (h *Handler) updateWorker(ctx echo.Context) error {
 func (h *Handler) getWorkers(ctx echo.Context) error {
 	ws := h.wf.GetService(uwork.Admin)
 	workers := ws.GetAll()
-	resp := converters.ConvertGetAllWorkerOutput(workers)
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, workers)
 }
 
 func (h *Handler) getWorker(ctx echo.Context) error {
@@ -63,10 +60,7 @@ func (h *Handler) getWorker(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
-	resp := converters.ConvertWorkerOutput(worker)
-
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, worker)
 }
 
 func (h *Handler) deleteWorker(ctx echo.Context) error {

@@ -3,16 +3,14 @@ package handler
 import (
 	"net/http"
 
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-
-	"github.com/gin-gonic/gin"
 )
 
 type info struct {
+	Name      string `json:"name"`
 	clientID  uuid.UUID
 	projectID uuid.UUID
 }
@@ -36,29 +34,23 @@ func (i *info) bind(ctx echo.Context) error {
 		i.projectID = id
 	}
 
-	return nil
+	return ctx.Bind(i)
 }
 
-func (h *Handler) createProject(ctx *gin.Context) {
-	req := new(ds.CreateProjectInput)
-
-	if err := ctx.BindJSON(req); err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
+func (h *Handler) createProject(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	project := converters.ConvertCreateProjectInput(req)
 	ps := h.pf.GetService(uwork.Admin)
-	id, err := ps.Create(project)
-	if err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error())
-		return
+	if err := ps.Create(&models.Project{
+		Name: data.Name,
+	}); err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := converters.ConvertCreateProjectOutput(id, project.Name)
-
-	ctx.JSON(http.StatusOK, resp)
-
+	return ctx.NoContent(http.StatusCreated)
 }
 
 func (h *Handler) getProject(ctx echo.Context) error {
@@ -71,50 +63,47 @@ func (h *Handler) getProject(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-	//ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, project)
 }
 
-func (h *Handler) getProjects(ctx *gin.Context) {
-	//ps := h.pf.GetService(uwork.Admin)
-	//projects := ps.GetAll()
-	//resp := converters.ConvertPro
-
-	//ctx.JSON(http.StatusOK, resp)
-}
-
-func (h *Handler) updateProject(ctx *gin.Context) {
-	id, err := extractID(nil)
-	if err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
+func (h *Handler) getProjects(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
-	req := new(ds.UpdateProjectInput)
-	if err := ctx.BindJSON(req); err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	project := converters.ConvertUpdateProjectInput(req.Name, id)
 	ps := h.pf.GetService(uwork.Admin)
-	if err := ps.Update(project); err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
-	}
+	projects := ps.GetAll(data.clientID)
+	return ctx.JSON(http.StatusOK, projects)
 }
 
-func (h *Handler) deleteProject(ctx *gin.Context) {
-	id, err := extractID(nil)
-	if err != nil {
-		ctx.String(http.StatusBadRequest, err.Error())
-		return
+func (h *Handler) updateProject(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ps := h.pf.GetService(uwork.Admin)
-	if err := ps.Delete(id); err != nil {
-		ctx.String(http.StatusInternalServerError, err.Error())
-		return
+	if err := ps.Update(&models.Project{
+		ID:       data.projectID,
+		ClientID: data.clientID,
+		Name:     data.Name,
+	}); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ctx.Status(http.StatusOK)
+	return ctx.NoContent(http.StatusOK)
+}
+
+func (h *Handler) deleteProject(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ps := h.pf.GetService(uwork.Admin)
+	if err := ps.Delete(data.clientID, data.projectID); err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.NoContent(http.StatusOK)
 }

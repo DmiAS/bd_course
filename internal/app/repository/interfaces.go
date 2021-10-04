@@ -22,10 +22,10 @@ type IAuthRepository interface {
 
 type IProjectRepository interface {
 	Create(project *models.Project) error
-	Get(projectID uuid.UUID) (*models.Project, error)
-	GetAll() models.Projects
+	Get(clientID, projectID uuid.UUID) (*models.Project, error)
+	GetAll(clientID uuid.UUID) models.Projects
 	Update(project *models.Project) error
-	Delete(id uuid.UUID) error
+	Delete(clientID, projectID uuid.UUID) error
 }
 
 type IThreadRepository interface {

@@ -45,7 +45,8 @@ func (s *Service) Get(id uuid.UUID) (*models.Worker, error) {
 	return wRep.Get(id)
 }
 
-func (s *Service) GetAll() models.Workers {
+func (s *Service) GetAll() *models.WorkersList {
 	wRep := s.unit.GetWorkerRepository()
-	return wRep.GetAll()
+	workers := wRep.GetAll()
+	return models.NewWorkersList(workers)
 }

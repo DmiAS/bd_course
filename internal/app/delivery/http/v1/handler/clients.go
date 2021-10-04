@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/labstack/echo/v4"
 
@@ -10,12 +9,11 @@ import (
 )
 
 func (h *Handler) createClient(ctx echo.Context) error {
-	req := &ds.User{}
-	if err := ctx.Bind(req); err != nil {
+	client := &models.Client{}
+	if err := ctx.Bind(client); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	client := converters.ConvertClientInput(req)
 	cs := h.cf.GetService(uwork.Admin)
 	resp, err := cs.Create(client)
 	if err != nil {
@@ -26,8 +24,8 @@ func (h *Handler) createClient(ctx echo.Context) error {
 }
 
 func (h *Handler) updateClient(ctx echo.Context) error {
-	req := &ds.User{}
-	if err := ctx.Bind(req); err != nil {
+	client := &models.Client{}
+	if err := ctx.Bind(client); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -36,8 +34,8 @@ func (h *Handler) updateClient(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
 
-	client := converters.ConvertClientInputWithID(req, id)
 	cs := h.cf.GetService(uwork.Admin)
+	client.User.ID = id
 	if err := cs.Update(client); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
@@ -48,8 +46,7 @@ func (h *Handler) updateClient(ctx echo.Context) error {
 func (h *Handler) getClients(ctx echo.Context) error {
 	cs := h.cf.GetService(uwork.Admin)
 	clients := cs.GetAll()
-	resp := converters.ConvertGetAllClientsOutput(clients)
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, clients)
 }
 
 func (h *Handler) getClient(ctx echo.Context) error {
@@ -64,9 +61,7 @@ func (h *Handler) getClient(ctx echo.Context) error {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := converters.ConvertClientOutput(client)
-
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, client)
 }
 
 func (h *Handler) deleteClient(ctx echo.Context) error {

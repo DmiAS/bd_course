@@ -40,7 +40,8 @@ func (s *Service) Get(id uuid.UUID) (*models.Client, error) {
 	return cRep.Get(id)
 }
 
-func (s *Service) GetAll() models.Clients {
+func (s *Service) GetAll() *models.ClientsList {
 	cRep := s.unit.GetClientRepository()
-	return cRep.GetAll()
+	clients := cRep.GetAll()
+	return models.NewClientsList(clients)
 }

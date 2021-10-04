@@ -10,14 +10,14 @@ type IWorkerService interface {
 	Create(worker *models.Worker) (*models.Auth, error)
 	Update(worker *models.Worker) error
 	Get(id uuid.UUID) (*models.Worker, error)
-	GetAll() models.Workers
+	GetAll() *models.WorkersList
 }
 
 type IClientService interface {
 	Create(client *models.Client) (*models.Auth, error)
 	Update(client *models.Client) error
 	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() models.Clients
+	GetAll() *models.ClientsList
 }
 
 type IAuthService interface {
@@ -27,11 +27,11 @@ type IAuthService interface {
 }
 
 type IProjectService interface {
-	Create(project *models.Project) (uuid.UUID, error)
+	Create(project *models.Project) error
 	Get(clientID, projectID uuid.UUID) (*models.Project, error)
-	GetAll() models.Projects
+	GetAll(clientID uuid.UUID) *models.ProjectsList
 	Update(project *models.Project) error
-	Delete(id uuid.UUID) error
+	Delete(clientID, projectID uuid.UUID) error
 }
 
 type IThreadService interface {

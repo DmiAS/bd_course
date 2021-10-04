@@ -77,11 +77,11 @@ func (h *Handler) initRoutes() {
 
 	projects := clients.Group("/")
 	{
-		projects.GET("/:client_id/projects", h.getProject)
+		projects.GET("/:client_id/projects", h.getProjects)
 		projects.POST("/:client_id/projects", h.createProject)
-		projects.GET("/:client_id/projects/:id", nil)
-		projects.PUT("/:client_id/projects/:id", nil)
-		projects.DELETE("/:client_id/projects/:id", nil)
+		projects.GET("/:client_id/projects/:id", h.getProject)
+		projects.PUT("/:client_id/projects/:id", h.updateProject)
+		projects.DELETE("/:client_id/projects/:id", h.deleteProject)
 	}
 	//
 	//	threads := h.router.Group("/threads")

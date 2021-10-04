@@ -14,8 +14,8 @@ type IDs struct {
 }
 
 type Auth struct {
-	Login    string
-	Password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 	Salt     string
 	UserID   uuid.UUID
 }
