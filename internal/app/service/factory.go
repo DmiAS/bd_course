@@ -4,6 +4,7 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/service/auth"
 	"github.com/DmiAS/bd_course/internal/app/service/clients"
 	"github.com/DmiAS/bd_course/internal/app/service/project"
+	"github.com/DmiAS/bd_course/internal/app/service/thread"
 	"github.com/DmiAS/bd_course/internal/app/service/worker"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 )
@@ -54,4 +55,16 @@ func NewProjectFactory(u uwork.UnitOfWork) *ProjectFactory {
 func (p ProjectFactory) GetService(role uwork.Role) IProjectService {
 	unit := p.unit.WithRole(role)
 	return project.NewService(unit)
+}
+
+type ThreadFactory struct {
+	unit uwork.UnitOfWork
+}
+
+func NewThreadFactory(u uwork.UnitOfWork) *ThreadFactory {
+	return &ThreadFactory{unit: u}
+}
+func (t ThreadFactory) GetService(role uwork.Role) IThreadService {
+	unit := t.unit.WithRole(role)
+	return thread.NewService(unit)
 }

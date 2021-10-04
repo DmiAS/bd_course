@@ -1,73 +1,80 @@
 package handler
 
-//func (h *Handler) createThread(ctx echo.Context) error{
-//	req := &info{}
-//	if err := req.bind(ctx); err != nil {
-//		return ctx.String(http.StatusBadRequest, err.Error())
-//	}
-//
-//
-//	if err := h.threads.Create(thread); err != nil {
-//		ctx.String(http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	resp := converters2.ConvertCreateProjectOutput(id, thread.Name)
-//
-//	ctx.JSON(http.StatusOK, resp)
-//
-//}
+import (
+	"net/http"
 
-//func (h *Handler) getThreads(ctx *gin.Context) {
-//	id, err := extractID(ctx)
-//	if err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	threads, err := h.threads.Get(id)
-//	if err != nil {
-//		ctx.String(http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	resp := converters2.ConvertGetThreadsOutput(threads)
-//
-//	ctx.JSON(http.StatusOK, resp)
-//}
-//
-//func (h *Handler) updateThread(ctx *gin.Context) {
-//	id, err := extractID(ctx)
-//	if err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	req := new(ds.UpdateThreadInput)
-//	if err := ctx.BindJSON(req); err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	thread := converters2.ConvertUpdateThreadInput(req.Name, id)
-//
-//	if err := h.threads.Update(thread); err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//}
-//
-//func (h *Handler) deleteThread(ctx *gin.Context) {
-//	id, err := extractID(ctx)
-//	if err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	if err := h.threads.Delete(id); err != nil {
-//		ctx.String(http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	ctx.Status(http.StatusOK)
-//}
+	"github.com/DmiAS/bd_course/internal/app/models"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/labstack/echo/v4"
+)
+
+func (h *Handler) createThread(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ts := h.tf.GetService(uwork.Admin)
+	if err := ts.Create(&models.Thread{
+		Name: data.Name,
+	}); err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.NoContent(http.StatusCreated)
+}
+
+func (h *Handler) getThread(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+	ts := h.tf.GetService(uwork.Admin)
+	thread, err := ts.Get(data.rootID, data.id)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+	return ctx.JSON(http.StatusOK, thread)
+}
+
+func (h *Handler) getThreads(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+	ts := h.tf.GetService(uwork.Admin)
+	threads := ts.GetAll(data.rootID)
+	return ctx.JSON(http.StatusOK, threads)
+}
+
+func (h *Handler) updateThread(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ts := h.tf.GetService(uwork.Admin)
+	if err := ts.Update(&models.Thread{
+		ID:        data.id,
+		ProjectID: data.rootID,
+		Name:      data.Name,
+	}); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	return ctx.NoContent(http.StatusOK)
+}
+
+func (h *Handler) deleteThread(ctx echo.Context) error {
+	data := &info{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ts := h.tf.GetService(uwork.Admin)
+	if err := ts.Delete(data.rootID, data.id); err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.NoContent(http.StatusOK)
+}

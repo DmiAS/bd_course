@@ -15,6 +15,7 @@ type Handler struct {
 	af *service.AuthFactory
 	cf *service.ClientFactory
 	pf *service.ProjectFactory
+	tf *service.ThreadFactory
 	//projects  service.IProjectService
 	//threads   service.IThreadService
 	//campaigns service.ICampaignService
@@ -25,13 +26,15 @@ func NewHandler(
 	wf *service.WorkerFactory,
 	af *service.AuthFactory,
 	cf *service.ClientFactory,
-	pf *service.ProjectFactory) *Handler {
+	pf *service.ProjectFactory,
+	tf *service.ThreadFactory) *Handler {
 	router := echo.New()
 	handler := &Handler{
 		router: router,
 		wf:     wf,
 		af:     af,
 		cf:     cf,
+		tf:     tf,
 		//projects:  projects,
 		//threads:   threads,
 		//campaigns: campaigns,
@@ -86,11 +89,11 @@ func (h *Handler) initRoutes() {
 
 	threads := h.router.Group("/projects/:project_id/threads")
 	{
-		threads.GET("/", h.getProjects)
-		threads.POST("/", h.createProject)
-		threads.GET("/:id", h.getProject)
-		threads.PUT("/:id", h.updateProject)
-		threads.DELETE("/:id", h.deleteProject)
+		threads.GET("/", h.getThreads)
+		threads.POST("/", h.createThread)
+		threads.GET("/:id", h.getThread)
+		threads.PUT("/:id", h.updateThread)
+		threads.DELETE("/:id", h.deleteThread)
 	}
 	//	camps := h.router.Group("/campaigns")
 	//	{

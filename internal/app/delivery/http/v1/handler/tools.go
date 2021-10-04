@@ -11,28 +11,28 @@ func extractID(ctx echo.Context) (uuid.UUID, error) {
 }
 
 type info struct {
-	Name      string `json:"name"`
-	clientID  uuid.UUID
-	projectID uuid.UUID
+	Name   string `json:"name"`
+	rootID uuid.UUID
+	id     uuid.UUID
 }
 
 func (i *info) bind(ctx echo.Context) error {
-	clientID := ctx.Param("client_id")
-	if clientID != "" {
-		id, err := uuid.Parse(clientID)
+	rootID := ctx.Param("client_id")
+	if rootID != "" {
+		id, err := uuid.Parse(rootID)
 		if err != nil {
 			return err
 		}
-		i.clientID = id
+		i.rootID = id
 	}
 
-	projectID := ctx.Param("id")
-	if projectID != "" {
-		id, err := uuid.Parse(projectID)
+	id := ctx.Param("id")
+	if id != "" {
+		id, err := uuid.Parse(id)
 		if err != nil {
 			return err
 		}
-		i.projectID = id
+		i.id = id
 	}
 
 	return ctx.Bind(i)

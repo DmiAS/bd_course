@@ -10,6 +10,6 @@ type Service struct {
 	rep  repository.IThreadRepository
 }
 
-func NewService(rep repository.IThreadRepository) *Service {
-	return &Service{rep: rep}
+func NewService(unit uwork.UnitOfWork) *Service {
+	return &Service{unit: unit}
 }
