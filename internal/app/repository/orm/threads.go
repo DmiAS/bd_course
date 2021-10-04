@@ -11,23 +11,29 @@ type ThreadRepository struct {
 }
 
 func (t ThreadRepository) Create(thread *models.Thread) error {
-	panic("implement me")
+	return t.db.Create(thread).Error
 }
 
 func (t ThreadRepository) Get(projectID, threadID uuid.UUID) (*models.Thread, error) {
-	panic("implement me")
+	thread := &models.Thread{}
+	res := t.db.
+		Where("project_id = ? and id = ?", projectID, threadID).First(thread)
+	return thread, res.Error
 }
 
 func (t ThreadRepository) GetAll(projectID uuid.UUID) models.Threads {
-	panic("implement me")
+	var threads models.Threads
+	t.db.Where("project_id = ?", projectID).Find(&threads)
+	return threads
 }
 
 func (t ThreadRepository) Update(thread *models.Thread) error {
-	panic("implement me")
+	return t.db.
+		Where("project_id = ? and id = ?", thread.ProjectID, thread.ID).Updates(thread).Error
 }
 
 func (t ThreadRepository) Delete(projectID, threadID uuid.UUID) error {
-	panic("implement me")
+	return t.db.Where("project_id = ? and id = ?", projectID, threadID).Delete(&models.Projects{}).Error
 }
 
 func NewThreadRepository(db *gorm.DB) *ThreadRepository {
