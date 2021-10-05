@@ -17,6 +17,15 @@ type IWorkerService interface {
 	Update(worker *models.Worker) error
 	Get(id uuid.UUID) (*models.Worker, error)
 	GetAll() *models.WorkersList
+
+	//methods to work with campaigns
+	GetCampaigns(id uuid.UUID) *models.CampaignsList
+	// прикрепляет или открепляет кампанию к потоку
+	AttachCampaign(threadID, campID uuid.UUID) error
+
+	// назначает кампанию на себя
+	AssignCampaign(campaign *models.Campaign) error
+	UnAssignCampaign(campID uuid.UUID) error
 }
 
 type IClientService interface {

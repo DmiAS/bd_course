@@ -37,3 +37,29 @@ func (i *info) bind(ctx echo.Context) error {
 
 	return ctx.Bind(i)
 }
+
+type campReq struct {
+	ThreadID     uuid.UUID `json:"thread_id"`
+	targetologID uuid.UUID
+	id           uuid.UUID
+}
+
+func (c *campReq) bind(ctx echo.Context) error {
+	if id := ctx.Param("targetolog_id"); id != "" {
+		var err error
+		c.targetologID, err = uuid.Parse(id)
+		if err != nil {
+			return err
+		}
+	}
+
+	if id := ctx.Param("id"); id != "" {
+		var err error
+		c.id, err = uuid.Parse(id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return ctx.Bind(c)
+}

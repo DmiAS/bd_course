@@ -33,3 +33,25 @@ func (w WorkerRepository) GetAll() models.Workers {
 	w.db.Find(&workers)
 	return workers
 }
+
+func (w WorkerRepository) GetCampaigns(workerID uuid.UUID) models.Campaigns {
+	var camps models.Campaigns
+	w.db.Model(&models.Campaign{}).Where("targetolog_id = ?", workerID).Find(&camps)
+	return camps
+}
+
+func (w WorkerRepository) AttachCampaign(threadID, campID uuid.UUID) error {
+	return w.db.Model(&models.Campaign{}).
+		Where("id = ?", campID).
+		Update("thread_id", threadID).Error
+}
+
+func (w WorkerRepository) AssignCampaign(camp *models.Campaign) error {
+	return w.db.Create(camp).Error
+}
+
+func (w WorkerRepository) UnAssignCampaign(campID uuid.UUID) error {
+	return w.db.Model(&models.Campaign{}).
+		Where("id = ?", campID).
+		UpdateColumn("targetolog_id", uuid.UUID{}).Error
+}

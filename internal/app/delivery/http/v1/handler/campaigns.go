@@ -1,36 +1,34 @@
 package handler
 
-//
-//import (
-//	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/converters"
-//	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
-//	"net/http"
-//
-//	"github.com/gin-gonic/gin"
-//)
-//
-//func (h *Handler) getCampaigns(ctx *gin.Context) {
-//
-//}
-//
-//func (h *Handler) updateCampaign(ctx *gin.Context) {
-//	id, err := extractID(ctx)
-//	if err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	req := new(ds.UpdateCampaignInput)
-//	if err := ctx.BindJSON(req); err != nil {
-//		ctx.String(http.StatusBadRequest, err.Error())
-//		return
-//	}
-//
-//	camp := converters.ConvertUpdateCampaignInput(req, id)
-//	if err := h.campaigns.Update(camp); err != nil {
-//		ctx.String(http.StatusInternalServerError, err.Error())
-//		return
-//	}
-//
-//	ctx.Status(http.StatusOK)
-//}
+import (
+	"net/http"
+
+	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/labstack/echo/v4"
+)
+
+// получение кампаний таргетолога
+func (h *Handler) getCampaigns(ctx echo.Context) error {
+	req := &campReq{}
+	if err := req.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ws := h.wf.GetService(uwork.Admin)
+	camps := ws.GetCampaigns(req.targetologID)
+	return ctx.JSON(http.StatusOK, camps)
+}
+
+// привязка кампании к конкретному потоку
+func (h *Handler) attachCampaign(ctx echo.Context) error {
+	req := &campReq{}
+	if err := req.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ws := h.wf.GetService(uwork.Admin)
+	if err := ws.AttachCampaign(req.ThreadID, req.id); err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+	return ctx.NoContent(http.StatusOK)
+}

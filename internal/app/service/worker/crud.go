@@ -50,3 +50,24 @@ func (s *Service) GetAll() *models.WorkersList {
 	workers := wRep.GetAll()
 	return models.NewWorkersList(workers)
 }
+
+func (s *Service) GetCampaigns(workerID uuid.UUID) *models.CampaignsList {
+	rep := s.unit.GetWorkerRepository()
+	camps := rep.GetCampaigns(workerID)
+	return models.NewCampaignsList(camps)
+}
+
+func (s *Service) AttachCampaign(threadID, campID uuid.UUID) error {
+	rep := s.unit.GetWorkerRepository()
+	return rep.AttachCampaign(threadID, campID)
+}
+
+func (s *Service) AssignCampaign(campaign *models.Campaign) error {
+	rep := s.unit.GetWorkerRepository()
+	return rep.AssignCampaign(campaign)
+}
+
+func (s *Service) UnAssignCampaign(campID uuid.UUID) error {
+	rep := s.unit.GetWorkerRepository()
+	return rep.UnAssignCampaign(campID)
+}

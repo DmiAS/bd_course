@@ -11,6 +11,11 @@ type IWorkerRepository interface {
 	Update(worker *models.Worker) error
 	Get(id uuid.UUID) (*models.Worker, error)
 	GetAll() models.Workers
+
+	GetCampaigns(workerID uuid.UUID) models.Campaigns
+	AttachCampaign(threadID, campID uuid.UUID) error
+	AssignCampaign(camp *models.Campaign) error
+	UnAssignCampaign(campID uuid.UUID) error
 }
 
 type IAuthRepository interface {

@@ -95,9 +95,12 @@ func (h *Handler) initRoutes() {
 		threads.PUT("/:id", h.updateThread)
 		threads.DELETE("/:id", h.deleteThread)
 	}
-	//	camps := h.router.Group("/campaigns")
-	//	{
-	//		camps.GET("/", h.getCampaigns)
-	//		camps.PUT("/:id", h.updateCampaign)
-	//	}
+
+	camps := h.router.Group("/targetologs/:targetolog_id/campaigns")
+	{
+		camps.GET("/", h.getCampaigns)
+		camps.PUT("/:id", h.attachCampaign)
+	}
+
+	//stats := h.router.Group("")
 }
