@@ -12,9 +12,18 @@ type CampaignRepository struct {
 	db *gorm.DB
 }
 
+func (c CampaignRepository) GetCampaign(campaignID uuid.UUID) (*models.Campaign, error) {
+	camp := &models.Campaign{}
+	res := c.db.Model(&models.Campaign{}).Where("id = ?", campaignID).First(camp)
+	if err := res.Error; err != nil {
+		return nil, err
+	}
+	return camp, nil
+}
+
 func (c CampaignRepository) GetCampaignStat(campID uuid.UUID, from, to time.Time) []models.CampaignStat {
 	var stats []models.CampaignStat
-	c.db.Table("camp_stats").
+	c.db.Model(&models.CampaignStat{}).
 		Where("camp_id = ? and date between from and to", campID, from, to).
 		Find(stats)
 	return stats

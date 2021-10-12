@@ -40,6 +40,7 @@ func NewHandler(
 		cf:     cf,
 		tf:     tf,
 		pf:     pf,
+		sf:     sf,
 		cmpf:   cmpf,
 	}
 	handler.initRoutes()
@@ -106,5 +107,6 @@ func (h *Handler) initRoutes() {
 		stats.GET("/threads/:thread_id", h.getThreadStat)
 		stats.GET("/camps/:camp_id", h.getCampStat)
 		stats.GET("/targetologs/:target_id", h.getTargetologStat)
+		stats.GET("/targetologs/:target_id/camps/:camp_id", h.getTargetologCampaignFullStat)
 	}
 }

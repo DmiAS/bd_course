@@ -17,6 +17,7 @@ type IWorkerRepository interface {
 
 type ICampaignRepository interface {
 	GetAll() models.Campaigns
+	GetCampaign(campaignID uuid.UUID) (*models.Campaign, error)
 	GetCampaigns(workerID uuid.UUID) models.Campaigns
 	GetThreadCampaigns(threadID uuid.UUID) models.Campaigns
 	GetCampaignStat(campID uuid.UUID, from, to time.Time) []models.CampaignStat
@@ -32,7 +33,7 @@ type IAuthRepository interface {
 
 type IProjectRepository interface {
 	Create(project *models.Project) error
-	Get(clientID, projectID uuid.UUID) (*models.Project, error)
+	Get(projectID uuid.UUID) (*models.Project, error)
 	GetAll(clientID uuid.UUID) models.Projects
 	Update(project *models.Project) error
 	Delete(clientID, projectID uuid.UUID) error

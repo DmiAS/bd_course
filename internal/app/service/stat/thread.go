@@ -47,6 +47,7 @@ func (s Service) getCampsStat(camps models.Campaigns, from, to time.Time) []mode
 		stat.CabinetID = camp.CabinetID
 		stat.VkClientID = camp.ClientID
 		stat.CampID = camp.ID
+		stat.Name = camp.Name
 		total = append(total, stat)
 	}
 	return total

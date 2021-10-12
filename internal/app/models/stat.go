@@ -8,6 +8,7 @@ import (
 
 type ProjectStat struct {
 	ProjectID   uuid.UUID          `json:"project_id"`
+	Name        string             `json:"name"`
 	From        time.Time          `json:"from"`
 	To          time.Time          `json:"to"`
 	Spent       float64            `json:"spent"`
@@ -43,6 +44,7 @@ type CampSimpleStat struct {
 	CampID       uuid.UUID `json:"camp_id"`
 	CabinetID    int       `json:"cabinet_id"`
 	VkClientID   int       `json:"vk_client_id"`
+	Name         string    `json:"name"`
 	From         time.Time `json:"from"`
 	To           time.Time `json:"to"`
 	Spent        float64   `json:"spent"`
@@ -55,4 +57,22 @@ type CampSimpleStat struct {
 
 type TargetologStat struct {
 	Camps []CampSimpleStat `json:"camps"`
+}
+
+type CampStat struct {
+	CampID     uuid.UUID         `json:"camp_id"`
+	CabinetID  int               `json:"cabinet_id"`
+	VkClientID int               `json:"vk_client_id"`
+	Name       string            `json:"name"`
+	Days       []CampaignDayStat `json:"days"`
+}
+
+type CampaignDayStat struct {
+	Day         time.Time `json:"day"`
+	Spent       float64   `json:"spent"`
+	Impressions int       `json:"impressions"`
+	Conversion  int       `json:"conversion"`
+	Subs        int       `json:"subs"`
+	Unsubs      int       `json:"unsubs"`
+	Sales       int       `json:"sales"`
 }

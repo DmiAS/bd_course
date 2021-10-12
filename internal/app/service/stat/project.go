@@ -7,14 +7,20 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) GetProjectStat(projectID uuid.UUID, from, to time.Time) models.ProjectStat {
+func (s Service) GetProjectStat(projectID uuid.UUID, from, to time.Time) (*models.ProjectStat, error) {
+	rep := s.unit.GetProjectRepository()
+	project, err := rep.Get(projectID)
+	if err != nil {
+		return nil, err
+	}
 	threadsStat := s.getThreadsStat(projectID, from, to)
-	project := collectProjectStat(threadsStat)
-	project.ProjectID = projectID
-	project.From = from
-	project.To = to
-	project.Threads = threadsStat
-	return project
+	projectStat := collectProjectStat(threadsStat)
+	projectStat.ProjectID = projectID
+	projectStat.From = from
+	projectStat.To = to
+	projectStat.Threads = threadsStat
+	projectStat.Name = project.Name
+	return &projectStat, nil
 }
 
 func (s Service) getThreadsStat(projectID uuid.UUID, from, to time.Time) []models.ThreadSimpleStat {

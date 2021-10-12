@@ -7,10 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const (
-	targetologID = "targetolog_id"
-)
-
 // получение кампаний таргетолога
 func (h *Handler) getTargetologCampaigns(ctx echo.Context) error {
 	id, err := extractID(ctx)
@@ -55,5 +51,4 @@ func (h *Handler) assignCampaign(ctx echo.Context) error {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.NoContent(http.StatusOK)
-	return nil
 }

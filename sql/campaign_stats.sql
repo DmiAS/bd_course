@@ -1,4 +1,4 @@
-create table if not exists camp_stats(
+create table if not exists campaign_stats(
     camp_id uuid primary key,
     date date, -- дата сбора статистики
     spent float,

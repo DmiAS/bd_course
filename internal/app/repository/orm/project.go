@@ -23,9 +23,9 @@ func (p ProjectRepository) Update(project *models.Project) error {
 		Where("client_id = ? and id = ?", project.ClientID, project.ID).Updates(project).Error
 }
 
-func (p ProjectRepository) Get(clientID, projectID uuid.UUID) (*models.Project, error) {
+func (p ProjectRepository) Get(projectID uuid.UUID) (*models.Project, error) {
 	project := &models.Project{}
-	res := p.db.Where("client_id = ? and id = ?", clientID, projectID).First(project)
+	res := p.db.Where("id = ?", projectID).First(project)
 	return project, res.Error
 }
 
