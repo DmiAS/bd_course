@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -16,6 +18,8 @@ type IWorkerRepository interface {
 type ICampaignRepository interface {
 	GetAll() models.Campaigns
 	GetCampaigns(workerID uuid.UUID) models.Campaigns
+	GetThreadCampaigns(threadID uuid.UUID) models.Campaigns
+	GetCampaignStat(campID uuid.UUID, from, to time.Time) []models.CampaignStat
 	Update(camp *models.Campaign) error
 }
 

@@ -20,7 +20,8 @@ type ProjectStat struct {
 }
 
 type ThreadSimpleStat struct {
-	ThreadID    uuid.UUID `json:"thread_id"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
 	From        time.Time `json:"from"`
 	To          time.Time `json:"to"`
 	Spent       float64   `json:"spent"`
@@ -40,8 +41,8 @@ type ThreadStat struct {
 type CampSimpleStat struct {
 	TargetologID uuid.UUID `json:"targetolog_id"`
 	CampID       uuid.UUID `json:"camp_id"`
-	CabinetID    uuid.UUID `json:"cabinet_id"`
-	VkClientID   uuid.UUID `json:"vk_client_id"`
+	CabinetID    int       `json:"cabinet_id"`
+	VkClientID   int       `json:"vk_client_id"`
 	From         time.Time `json:"from"`
 	To           time.Time `json:"to"`
 	Spent        float64   `json:"spent"`

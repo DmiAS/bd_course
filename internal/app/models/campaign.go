@@ -1,6 +1,21 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type CampaignStat struct {
+	CampID      uuid.UUID
+	Date        time.Time
+	Spent       float64
+	Impressions int
+	Conversion  int
+	Subs        []int
+	Unsubs      []int
+	Sales       int
+}
 
 type Campaign struct {
 	ID           uuid.UUID
