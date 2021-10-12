@@ -70,6 +70,11 @@ func (u Unit) GetThreadsRepository() repository.IThreadRepository {
 	return tr
 }
 
+func (u Unit) GetCampaignsRepository() repository.ICampaignRepository {
+	cr := orm.NewCampaignRepository(u.db)
+	return cr
+}
+
 func getConnection(role Role) *gorm.DB {
 	//conn, ok := u.conns[role]
 	//if !ok{

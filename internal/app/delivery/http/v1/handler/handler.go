@@ -11,11 +11,12 @@ import (
 type Handler struct {
 	router *echo.Echo
 
-	wf *service.WorkerFactory
-	af *service.AuthFactory
-	cf *service.ClientFactory
-	pf *service.ProjectFactory
-	tf *service.ThreadFactory
+	wf   *service.WorkerFactory
+	af   *service.AuthFactory
+	cf   *service.ClientFactory
+	pf   *service.ProjectFactory
+	tf   *service.ThreadFactory
+	cmpf *service.CampaignFactory
 	//projects  service.IProjectService
 	//threads   service.IThreadService
 	//campaigns service.ICampaignService
@@ -27,7 +28,8 @@ func NewHandler(
 	af *service.AuthFactory,
 	cf *service.ClientFactory,
 	pf *service.ProjectFactory,
-	tf *service.ThreadFactory) *Handler {
+	tf *service.ThreadFactory,
+	cmpf *service.CampaignFactory) *Handler {
 	router := echo.New()
 	handler := &Handler{
 		router: router,
@@ -35,9 +37,8 @@ func NewHandler(
 		af:     af,
 		cf:     cf,
 		tf:     tf,
-		//projects:  projects,
-		//threads:   threads,
-		//campaigns: campaigns,
+		pf:     pf,
+		cmpf:   cmpf,
 	}
 	handler.initRoutes()
 	return handler
@@ -55,6 +56,7 @@ func (h *Handler) initRoutes() {
 		workers.GET("/:id", h.getWorker)
 		workers.PUT("/:id", h.updateWorker)
 		workers.DELETE("/:id", h.deleteWorker)
+		workers.GET("/:id/camps", h.getTargetologCampaigns)
 	}
 
 	auth := h.router.Group("/auth")
@@ -69,13 +71,6 @@ func (h *Handler) initRoutes() {
 		clients.GET("/:id", h.getClient)
 		clients.PUT("/:id", h.updateClient)
 		clients.DELETE("/:id", h.deleteClient)
-
-		//projects
-		//clients.GET("/:client_id/projects", nil)
-		//clients.POST("/:client_id/projects", nil)
-		//clients.GET("/:client_id/projects/:id", nil)
-		//clients.PUT("/:client_id/projects/:id", nil)
-		//clients.DELETE("/:client_id/projects/:id", nil)
 	}
 
 	projects := clients.Group("/:client_id/projects")
@@ -96,10 +91,11 @@ func (h *Handler) initRoutes() {
 		threads.DELETE("/:id", h.deleteThread)
 	}
 
-	camps := h.router.Group("/targetologs/:targetolog_id/campaigns")
+	camps := h.router.Group("/campaigns")
 	{
 		camps.GET("/", h.getCampaigns)
 		camps.PUT("/:id", h.attachCampaign)
+		camps.POST("/:id", h.assignCampaign)
 	}
 
 	//stats := h.router.Group("")

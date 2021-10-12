@@ -11,11 +11,12 @@ type IWorkerRepository interface {
 	Update(worker *models.Worker) error
 	Get(id uuid.UUID) (*models.Worker, error)
 	GetAll() models.Workers
+}
 
+type ICampaignRepository interface {
+	GetAll() models.Campaigns
 	GetCampaigns(workerID uuid.UUID) models.Campaigns
-	AttachCampaign(threadID, campID uuid.UUID) error
-	AssignCampaign(camp *models.Campaign) error
-	UnAssignCampaign(campID uuid.UUID) error
+	Update(camp *models.Campaign) error
 }
 
 type IAuthRepository interface {
@@ -39,11 +40,6 @@ type IThreadRepository interface {
 	GetAll(projectID uuid.UUID) models.Threads
 	Update(thread *models.Thread) error
 	Delete(projectID, threadID uuid.UUID) error
-}
-
-type ICampaignRepository interface {
-	UpdateWorker(campID, workerID uuid.UUID) error
-	UpdateThread(threadID uuid.UUID) error
 }
 
 type IClientRepository interface {

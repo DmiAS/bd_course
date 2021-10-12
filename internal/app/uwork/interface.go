@@ -13,9 +13,11 @@ const (
 type UnitOfWork interface {
 	WithRole(role Role) UnitOfWork
 	WithTransaction(func(u UnitOfWork) error) error
+
 	GetWorkerRepository() repository.IWorkerRepository
 	GetAuthRepository() repository.IAuthRepository
 	GetClientRepository() repository.IClientRepository
 	GetProjectRepository() repository.IProjectRepository
 	GetThreadsRepository() repository.IThreadRepository
+	GetCampaignsRepository() repository.ICampaignRepository
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/DmiAS/bd_course/internal/app/service/auth"
+	"github.com/DmiAS/bd_course/internal/app/service/campaign"
 	"github.com/DmiAS/bd_course/internal/app/service/clients"
 	"github.com/DmiAS/bd_course/internal/app/service/project"
 	"github.com/DmiAS/bd_course/internal/app/service/thread"
@@ -67,4 +68,16 @@ func NewThreadFactory(u uwork.UnitOfWork) *ThreadFactory {
 func (t ThreadFactory) GetService(role uwork.Role) IThreadService {
 	unit := t.unit.WithRole(role)
 	return thread.NewService(unit)
+}
+
+type CampaignFactory struct {
+	unit uwork.UnitOfWork
+}
+
+func NewCampaignsFactory(u uwork.UnitOfWork) *CampaignFactory {
+	return &CampaignFactory{unit: u}
+}
+func (c CampaignFactory) GetService(role uwork.Role) ICampaignService {
+	unit := c.unit.WithRole(role)
+	return campaign.NewService(unit)
 }
