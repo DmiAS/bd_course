@@ -5,6 +5,7 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/service/campaign"
 	"github.com/DmiAS/bd_course/internal/app/service/clients"
 	"github.com/DmiAS/bd_course/internal/app/service/project"
+	"github.com/DmiAS/bd_course/internal/app/service/stat"
 	"github.com/DmiAS/bd_course/internal/app/service/thread"
 	"github.com/DmiAS/bd_course/internal/app/service/worker"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
@@ -80,4 +81,16 @@ func NewCampaignsFactory(u uwork.UnitOfWork) *CampaignFactory {
 func (c CampaignFactory) GetService(role uwork.Role) ICampaignService {
 	unit := c.unit.WithRole(role)
 	return campaign.NewService(unit)
+}
+
+type StatsFactory struct {
+	unit uwork.UnitOfWork
+}
+
+func NewStatsFactory(u uwork.UnitOfWork) *StatsFactory {
+	return &StatsFactory{unit: u}
+}
+func (s StatsFactory) GetService(role uwork.Role) IStatService {
+	unit := s.unit.WithRole(role)
+	return stat.NewService(unit)
 }

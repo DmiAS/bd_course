@@ -19,7 +19,9 @@ func main() {
 	cf := service.NewClientFactory(unit)
 	pf := service.NewProjectFactory(unit)
 	tf := service.NewThreadFactory(unit)
-	router := handler.NewHandler(wf, af, cf, pf, tf)
+	cmpf := service.NewCampaignsFactory(unit)
+	sf := service.NewStatsFactory(unit)
+	router := handler.NewHandler(wf, af, cf, pf, tf, cmpf, sf)
 	cfg := config.Config{HTTP: config.HTTP{Port: "80"}}
 	server := http.NewServer(router, cfg)
 	go server.Start()

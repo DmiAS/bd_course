@@ -51,3 +51,9 @@ type IThreadService interface {
 	Update(thread *models.Thread) error
 	Delete(projectID, threadID uuid.UUID) error
 }
+
+type IStatService interface {
+	GetProjectStat(projectID uuid.UUID) (*models.ProjectStat, error)
+	GetThreadStat(threadID uuid.UUID) (*models.ThreadStat, error)
+	GetTargetologStat(targetologID uuid.UUID) (*models.TargetologStat, error)
+}

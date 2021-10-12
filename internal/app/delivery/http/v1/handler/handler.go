@@ -17,6 +17,7 @@ type Handler struct {
 	pf   *service.ProjectFactory
 	tf   *service.ThreadFactory
 	cmpf *service.CampaignFactory
+	sf   *service.StatsFactory
 	//projects  service.IProjectService
 	//threads   service.IThreadService
 	//campaigns service.ICampaignService
@@ -29,7 +30,8 @@ func NewHandler(
 	cf *service.ClientFactory,
 	pf *service.ProjectFactory,
 	tf *service.ThreadFactory,
-	cmpf *service.CampaignFactory) *Handler {
+	cmpf *service.CampaignFactory,
+	sf *service.StatsFactory) *Handler {
 	router := echo.New()
 	handler := &Handler{
 		router: router,
@@ -98,5 +100,11 @@ func (h *Handler) initRoutes() {
 		camps.POST("/:id", h.assignCampaign)
 	}
 
-	//stats := h.router.Group("")
+	stats := h.router.Group("/statistic")
+	{
+		stats.GET("/projects/:id", h.getProjectStat)
+		stats.GET("/threads/:thread_id", h.getThreadStat)
+		stats.GET("/camps/:camp_id", h.getCampStat)
+		stats.GET("/targetologs/:target_id", h.getTargetologStat)
+	}
 }
