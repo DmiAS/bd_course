@@ -7,19 +7,36 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) getThreadStat(threadID uuid.UUID, name string, from, to time.Time) models.ThreadSimpleStat {
-	campsStat := s.getCampsStat(threadID, from, to)
-	thread := collectThreadStat(campsStat)
-	thread.ID = threadID
-	thread.From = from
-	thread.To = to
-	thread.Name = name
-	return thread
+func (s Service) GetThreadStat(threadID uuid.UUID, from, to time.Time) (*models.ThreadStat, error) {
+	rep := s.unit.GetThreadsRepository()
+	thread, err := rep.Get(threadID)
+	if err != nil {
+		return nil, err
+	}
+	camps := s.getThreadCampaigns(threadID)
+	campsStat := s.getCampsStat(camps, from, to)
+	targets := collectThreadTargetologs(camps)
+	return &models.ThreadStat{
+		ThreadSimpleStat: createThreadSimpleStat(campsStat, *thread, from, to),
+		Targetologs:      targets,
+		Camps:            campsStat,
+	}, nil
 }
 
-func (s Service) getCampsStat(threadID uuid.UUID, from, to time.Time) []models.CampSimpleStat {
+func (s Service) getThreadSimpleStat(thread models.Thread, from, to time.Time) models.ThreadSimpleStat {
+	camps := s.getThreadCampaigns(thread.ID)
+	campsStat := s.getCampsStat(camps, from, to)
+	stat := createThreadSimpleStat(campsStat, thread, from, to)
+	return stat
+}
+
+func (s Service) getThreadCampaigns(threadID uuid.UUID) models.Campaigns {
 	rep := s.unit.GetCampaignsRepository()
-	camps := rep.GetThreadCampaigns(threadID)
+	return rep.GetThreadCampaigns(threadID)
+}
+
+func (s Service) getCampsStat(camps models.Campaigns, from, to time.Time) []models.CampSimpleStat {
+	rep := s.unit.GetCampaignsRepository()
 	var total []models.CampSimpleStat
 	for _, camp := range camps {
 		stats := rep.GetCampaignStat(camp.ID, from, to)
@@ -33,6 +50,23 @@ func (s Service) getCampsStat(threadID uuid.UUID, from, to time.Time) []models.C
 		total = append(total, stat)
 	}
 	return total
+}
+
+func createThreadSimpleStat(campsStat []models.CampSimpleStat, thread models.Thread, from, to time.Time) models.ThreadSimpleStat {
+	stat := collectThreadStat(campsStat)
+	stat.ID = thread.ID
+	stat.From = from
+	stat.To = to
+	stat.Name = thread.Name
+	return stat
+}
+
+func collectThreadTargetologs(camps models.Campaigns) []uuid.UUID {
+	ids := make([]uuid.UUID, len(camps))
+	for _, camp := range camps {
+		ids = append(ids, camp.TargetologID)
+	}
+	return ids
 }
 
 func collectThreadStat(stats []models.CampSimpleStat) models.ThreadSimpleStat {

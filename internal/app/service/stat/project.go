@@ -22,7 +22,7 @@ func (s Service) getThreadsStat(projectID uuid.UUID, from, to time.Time) []model
 	threads := rep.GetAll(projectID)
 	var stats []models.ThreadSimpleStat
 	for _, thread := range threads {
-		stats = append(stats, s.getThreadStat(thread.ID, thread.Name, from, to))
+		stats = append(stats, s.getThreadSimpleStat(thread, from, to))
 	}
 	return stats
 }

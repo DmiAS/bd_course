@@ -40,7 +40,7 @@ type IProjectRepository interface {
 
 type IThreadRepository interface {
 	Create(thread *models.Thread) error
-	Get(projectID, threadID uuid.UUID) (*models.Thread, error)
+	Get(threadID uuid.UUID) (*models.Thread, error)
 	GetAll(projectID uuid.UUID) models.Threads
 	Update(thread *models.Thread) error
 	Delete(projectID, threadID uuid.UUID) error

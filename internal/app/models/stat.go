@@ -34,7 +34,7 @@ type ThreadSimpleStat struct {
 
 type ThreadStat struct {
 	ThreadSimpleStat
-	Targetologs []int            `json:"targetologs"`
+	Targetologs []uuid.UUID      `json:"targetologs"`
 	Camps       []CampSimpleStat `json:"camps"`
 }
 

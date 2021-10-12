@@ -14,10 +14,10 @@ func (t ThreadRepository) Create(thread *models.Thread) error {
 	return t.db.Create(thread).Error
 }
 
-func (t ThreadRepository) Get(projectID, threadID uuid.UUID) (*models.Thread, error) {
+func (t ThreadRepository) Get(threadID uuid.UUID) (*models.Thread, error) {
 	thread := &models.Thread{}
 	res := t.db.
-		Where("project_id = ? and id = ?", projectID, threadID).First(thread)
+		Where("id = ?", threadID).First(thread)
 	return thread, res.Error
 }
 
