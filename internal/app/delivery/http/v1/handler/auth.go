@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 
-	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/labstack/echo/v4"
@@ -12,6 +11,10 @@ import (
 type Auth struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+}
+
+type tokenResponse struct {
+	Token string `json:"token"`
 }
 
 func (h *Handler) login(ctx echo.Context) error {
@@ -28,7 +31,7 @@ func (h *Handler) login(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
 	}
-	return ctx.JSON(http.StatusOK, token)
+	return ctx.JSON(http.StatusOK, tokenResponse{token})
 }
 
 func (h *Handler) updateAuth(ctx echo.Context) error {
@@ -37,17 +40,13 @@ func (h *Handler) updateAuth(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	auth := &ds.Auth{}
+	auth := &models.Auth{}
 	if err := ctx.Bind(auth); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
+	auth.UserID = id
 	as := h.af.GetService(uwork.Admin)
-	if err := as.Update(&models.Auth{
-		Login:    auth.Login,
-		Password: auth.Password,
-		UserID:   id,
-	}); err != nil {
+	if err := as.Update(auth); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 

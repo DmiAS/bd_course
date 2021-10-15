@@ -11,7 +11,7 @@ import (
 
 const (
 	tokenHeader   = "Authorization"
-	tokenTemplate = "Bearer: %s"
+	tokenTemplate = "Bearer %s"
 	Role          = "role"
 	ID            = "id"
 )

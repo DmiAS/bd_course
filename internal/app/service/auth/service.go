@@ -9,7 +9,7 @@ import (
 type Service struct {
 	unit           uwork.UnitOfWork
 	expireDuration time.Duration
-	signKey        string
+	signKey        []byte
 }
 
 const (
@@ -21,6 +21,6 @@ func NewService(unit uwork.UnitOfWork) *Service {
 	return &Service{
 		unit:           unit,
 		expireDuration: defaultExpireDuration,
-		signKey:        signKey,
+		signKey:        []byte(signKey),
 	}
 }

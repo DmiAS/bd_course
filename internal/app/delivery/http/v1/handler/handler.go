@@ -54,8 +54,8 @@ func (h *Handler) initRoutes() {
 	{
 		workers := api.Group("/workers")
 		{
-			workers.POST("/", h.createWorker)
-			workers.GET("/", h.getWorkers)
+			workers.POST("", h.createWorker)
+			workers.GET("", h.getWorkers)
 			workers.GET("/:id", h.getWorker)
 			workers.PUT("/:id", h.updateWorker)
 			workers.DELETE("/:id", h.deleteWorker)

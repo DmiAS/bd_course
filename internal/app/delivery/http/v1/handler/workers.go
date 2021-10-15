@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) createWorker(ctx echo.Context) error {
-	worker := &models.Worker{}
+	worker := &models.WorkerEntity{}
 	if err := ctx.Bind(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
@@ -24,7 +24,7 @@ func (h *Handler) createWorker(ctx echo.Context) error {
 }
 
 func (h *Handler) updateWorker(ctx echo.Context) error {
-	worker := &models.Worker{}
+	worker := &models.WorkerEntity{}
 	if err := ctx.Bind(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
@@ -35,7 +35,7 @@ func (h *Handler) updateWorker(ctx echo.Context) error {
 	}
 
 	ws := h.wf.GetService(uwork.Admin)
-	worker.User.ID = id
+	worker.ID = id
 	if err := ws.Update(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}

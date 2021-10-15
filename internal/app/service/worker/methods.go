@@ -8,7 +8,8 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
-func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
+func (s *Service) Create(worker *models.WorkerEntity) (*models.Auth, error) {
+	worker.ID = uuid.UUID{}
 	var authInfo *models.Auth
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
 		aServ := auth.NewService(u)
@@ -18,9 +19,10 @@ func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
 			return err
 		}
 
-		worker.User.ID = authInfo.UserID
+		bdWorker := &models.Worker{User: worker.User, Grade: worker.Grade, Position: worker.Position}
+		bdWorker.User.ID = authInfo.UserID
 		wRep := u.GetWorkerRepository()
-		if err := wRep.Create(worker); err != nil {
+		if err := wRep.Create(bdWorker); err != nil {
 			return err
 		}
 		return nil
@@ -30,9 +32,10 @@ func (s *Service) Create(worker *models.Worker) (*models.Auth, error) {
 	return authInfo, nil
 }
 
-func (s *Service) Update(worker *models.Worker) error {
+func (s *Service) Update(worker *models.WorkerEntity) error {
 	wRep := s.unit.GetWorkerRepository()
-	return wRep.Update(worker)
+	bdWorker := &models.Worker{User: worker.User, Grade: worker.Grade, Position: worker.Position}
+	return wRep.Update(bdWorker)
 }
 
 func (s *Service) Delete(id uuid.UUID) error {
@@ -40,13 +43,29 @@ func (s *Service) Delete(id uuid.UUID) error {
 	return aRep.Delete(id)
 }
 
-func (s *Service) Get(id uuid.UUID) (*models.Worker, error) {
+func (s *Service) Get(id uuid.UUID) (*models.WorkerEntity, error) {
 	wRep := s.unit.GetWorkerRepository()
-	return wRep.Get(id)
+	worker, err := wRep.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	bdWorker := &models.WorkerEntity{User: worker.User, Grade: worker.Grade, Position: worker.Position}
+	return bdWorker, nil
 }
 
 func (s *Service) GetAll() *models.WorkersList {
 	wRep := s.unit.GetWorkerRepository()
 	workers := wRep.GetAll()
-	return models.NewWorkersList(workers)
+	wks := make([]models.WorkerEntity, 0, len(workers))
+	for i := range workers {
+		wks = append(wks, models.WorkerEntity{
+			User:     workers[i].User,
+			Grade:    workers[i].Grade,
+			Position: workers[i].Position,
+		})
+	}
+	return &models.WorkersList{
+		Amount:  len(workers),
+		Workers: wks,
+	}
 }

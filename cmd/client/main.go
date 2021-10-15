@@ -1,7 +1,7 @@
 package main
 
-import "C"
 import (
+	"encoding/base64"
 	"log"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -26,9 +26,10 @@ func main() {
 	if err != nil {
 		log.Fatalln(enc)
 	}
+	pass := base64.URLEncoding.EncodeToString(enc)
 	if err := db.Create(&models.Auth{
 		Login:    "advwolf",
-		Password: enc,
+		Password: pass,
 		Salt:     "salt",
 		UserID:   id,
 	}).Error; err != nil {

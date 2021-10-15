@@ -14,13 +14,6 @@ import (
 const passwordSize = 12
 const saltSize = 16
 
-type authInfo struct {
-	login    string
-	password []byte
-	salt     []byte
-	id       uuid.UUID
-}
-
 func (s *Service) Login(login, password string) (string, error) {
 	rep := s.unit.GetAuthRepository()
 	auth, err := rep.GetAuth(login)
@@ -60,12 +53,10 @@ func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error)
 			return err
 		}
 
-		authInfo, err := createAuthInfo(id, firstName, lastName)
-		if err != nil {
-			return err
-		}
+		password := gen.GenReadableString(passwordSize)
+		login := gen.Login(firstName, lastName)
 
-		encInfo, err := encryptAuthInfo(authInfo)
+		encInfo, err := createAuthInfo(id, login, password)
 		if err != nil {
 			return err
 		}
@@ -73,8 +64,8 @@ func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error)
 			return err
 		}
 		info = &models.Auth{
-			Login:    authInfo.login,
-			Password: bytesToString(authInfo.password),
+			Login:    login,
+			Password: password,
 			UserID:   id,
 		}
 		return nil
@@ -85,17 +76,7 @@ func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error)
 }
 
 func (s *Service) Update(info *models.Auth) error {
-	salt, err := gen.GenerateRandomString(saltSize)
-	if err != nil {
-		return err
-	}
-
-	encInfo, err := encryptAuthInfo(&authInfo{
-		login:    info.Login,
-		password: []byte(info.Password),
-		salt:     salt,
-		id:       info.UserID,
-	})
+	encInfo, err := createAuthInfo(info.UserID, info.Login, info.Password)
 	if err != nil {
 		return err
 	}
@@ -109,42 +90,23 @@ func (s *Service) Delete(id uuid.UUID) error {
 	return ar.Delete(id)
 }
 
-func createAuthInfo(id uuid.UUID, firstName, lastName string) (*authInfo, error) {
+func createAuthInfo(id uuid.UUID, login string, password string) (*models.Auth, error) {
 	salt, err := gen.GenerateRandomString(saltSize)
 	if err != nil {
 		return nil, err
 	}
-
-	password, err := gen.GenerateRandomString(passwordSize)
+	encP, err := gen.PasswordWithSalt([]byte(password), salt)
 	if err != nil {
 		return nil, err
 	}
-
-	login := gen.Login(firstName, lastName)
-	auth := &authInfo{
-		login:    login,
-		password: password,
-		salt:     salt,
-		id:       id,
+	auth := &models.Auth{
+		Login:    login,
+		Password: bytesToString(encP),
+		Salt:     bytesToString(salt),
+		UserID:   id,
 	}
 
 	return auth, nil
-}
-
-func encryptAuthInfo(info *authInfo) (*models.Auth, error) {
-	hashedPassword, err := gen.PasswordWithSalt(info.password, info.salt)
-	if err != nil {
-		return nil, err
-	}
-
-	strSalt := bytesToString(info.salt)
-
-	return &models.Auth{
-		Login:    info.login,
-		Password: hashedPassword,
-		Salt:     strSalt,
-		UserID:   info.id,
-	}, nil
 }
 
 func bytesToString(data []byte) string {

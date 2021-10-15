@@ -17,9 +17,9 @@ type IAuthService interface {
 }
 
 type IWorkerService interface {
-	Create(worker *models.Worker) (*models.Auth, error)
-	Update(worker *models.Worker) error
-	Get(id uuid.UUID) (*models.Worker, error)
+	Create(worker *models.WorkerEntity) (*models.Auth, error)
+	Update(worker *models.WorkerEntity) error
+	Get(id uuid.UUID) (*models.WorkerEntity, error)
 	GetAll() *models.WorkersList
 }
 

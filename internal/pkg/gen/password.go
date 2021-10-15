@@ -3,7 +3,6 @@ package gen
 import (
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	random "math/rand"
 	"time"
@@ -13,9 +12,9 @@ import (
 
 const chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
 
-func genReadableString(size int) string {
+func GenReadableString(size int) string {
 	length := len(chars)
-	res := make([]byte, 0, size)
+	res := make([]byte, size)
 
 	for i := range res {
 		res[i] = chars[random.Intn(length)]
@@ -29,7 +28,7 @@ func Login(firstName, lastName string) string {
 	firstName = trans.Transliterate(firstName, "en")
 	lastName = trans.Transliterate(lastName, "en")
 
-	randomString := genReadableString(5)
+	randomString := GenReadableString(5)
 	today := time.Now()
 	dayNumber := today.Weekday()
 	monthNumber := today.Month()
@@ -55,7 +54,7 @@ func GenerateRandomString(size int) ([]byte, error) {
 	return str, nil
 }
 
-func PasswordWithSalt(password, salt []byte) (string, error) {
+func PasswordWithSalt(password, salt []byte) ([]byte, error) {
 	var sha512Hasher = sha256.New()
 
 	// Append salt to gen
@@ -63,15 +62,11 @@ func PasswordWithSalt(password, salt []byte) (string, error) {
 
 	// Write gen bytes to the hasher
 	if _, err := sha512Hasher.Write(password); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// Get the SHA-256 hashed gen
 	hashedPasswordBytes := sha512Hasher.Sum(nil)
 
-	// Convert the hashed gen to a base64 encoded string
-	base64EncodedPasswordHash :=
-		base64.URLEncoding.EncodeToString(hashedPasswordBytes)
-
-	return base64EncodedPasswordHash, nil
+	return hashedPasswordBytes, nil
 }

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"encoding/base64"
 	"time"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -15,12 +16,17 @@ const algHeader = "alg"
 
 func comparePassword(password string, auth *models.Auth) error {
 	bp := []byte(password)
-	bs := []byte(auth.Salt)
+	bs, err := base64.URLEncoding.DecodeString(auth.Salt)
+	if err != nil {
+		return err
+	}
 	encP, err := gen.PasswordWithSalt(bp, bs)
 	if err != nil {
 		return err
 	}
-	if encP != auth.Password {
+
+	pass := base64.URLEncoding.EncodeToString(encP)
+	if pass != auth.Password {
 		return errors.New("password does not match")
 	}
 	return nil
