@@ -1,13 +1,35 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/DmiAS/bd_course/internal/app/delivery/http/v1/ds"
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/labstack/echo/v4"
-
-	"net/http"
 )
+
+type Auth struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+func (h *Handler) login(ctx echo.Context) error {
+	info := &Auth{}
+	if err := ctx.Bind(info); err != nil {
+		return err
+	}
+
+	if info.Login == "" || info.Password == "" {
+		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
+	}
+	af := h.af.GetService(uwork.Admin)
+	token, err := af.Login(info.Login, info.Password)
+	if err != nil {
+		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
+	}
+	return ctx.JSON(http.StatusOK, token)
+}
 
 func (h *Handler) updateAuth(ctx echo.Context) error {
 	id, err := extractID(ctx)

@@ -6,7 +6,9 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/DmiAS/bd_course/internal/pkg/gen"
+	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 const passwordSize = 12
@@ -30,6 +32,23 @@ func (s *Service) Login(login, password string) (string, error) {
 	}
 
 	return "", nil
+}
+
+func (s *Service) GetRoleInfo(tokenStr string) (*models.IDs, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.Errorf("Unexpected signing method: %v", token.Header[algHeader])
+		}
+		return s.signKey, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !token.Valid {
+		return nil, errors.Errorf("token %s is invalid", tokenStr)
+	}
+
+	return s.extractIdsFromToken(token)
 }
 
 func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error) {

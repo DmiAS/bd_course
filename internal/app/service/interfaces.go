@@ -7,6 +7,8 @@ import (
 )
 
 type IAuthService interface {
+	Login(login, password string) (string, error)
+	GetRoleInfo(tokenStr string) (*models.IDs, error)
 	Create(firstName, lastName, role string) (*models.Auth, error)
 	Delete(id uuid.UUID) error
 	Update(auth *models.Auth) error

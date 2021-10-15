@@ -12,6 +12,8 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 )
 
+const algHeader = "alg"
+
 func comparePassword(password string, auth *models.Auth) error {
 	bp := bytes.NewBufferString(password)
 	bs := bytes.NewBufferString(auth.Salt)
@@ -45,4 +47,20 @@ func (s *Service) createToken(id uuid.UUID) (string, error) {
 		},
 	})
 	return token.SignedString(s.signKey)
+}
+
+func (s *Service) extractIdsFromToken(token *jwt.Token) (*models.IDs, error) {
+	claims, ok := token.Claims.(*claims)
+	if !ok {
+		return nil, errors.New("invalid claims")
+	}
+
+	id, err := uuid.Parse(claims.ID)
+	if err != nil {
+		return nil, errors.New("invalid uuid")
+	}
+	return &models.IDs{
+		ID:   id,
+		Role: claims.Role,
+	}, nil
 }

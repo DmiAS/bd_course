@@ -18,10 +18,6 @@ type Handler struct {
 	tf   *service.ThreadFactory
 	cmpf *service.CampaignFactory
 	sf   *service.StatsFactory
-	//projects  service.IProjectService
-	//threads   service.IThreadService
-	//campaigns service.ICampaignService
-	//clients   service.IClientService
 }
 
 func NewHandler(
@@ -52,61 +48,66 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h *Handler) initRoutes() {
-	workers := h.router.Group("/workers")
+	// login handler
+	h.router.POST("/login", h.login)
+	api := h.router.Group("/api/v1", h.auth)
 	{
-		workers.POST("/", h.createWorker)
-		workers.GET("/", h.getWorkers)
-		workers.GET("/:id", h.getWorker)
-		workers.PUT("/:id", h.updateWorker)
-		workers.DELETE("/:id", h.deleteWorker)
-		workers.GET("/:id/camps", h.getTargetologCampaigns)
-	}
+		workers := api.Group("/workers")
+		{
+			workers.POST("/", h.createWorker)
+			workers.GET("/", h.getWorkers)
+			workers.GET("/:id", h.getWorker)
+			workers.PUT("/:id", h.updateWorker)
+			workers.DELETE("/:id", h.deleteWorker)
+			workers.GET("/:id/camps", h.getTargetologCampaigns)
+		}
 
-	auth := h.router.Group("/auth")
-	{
-		auth.PUT("/:id", h.updateAuth)
-	}
+		auth := api.Group("/auth")
+		{
+			auth.PUT("/:id", h.updateAuth)
+		}
 
-	clients := h.router.Group("/clients")
-	{
-		clients.POST("/", h.createClient)
-		clients.GET("/", h.getClients)
-		clients.GET("/:id", h.getClient)
-		clients.PUT("/:id", h.updateClient)
-		clients.DELETE("/:id", h.deleteClient)
-	}
+		clients := api.Group("/clients")
+		{
+			clients.POST("/", h.createClient)
+			clients.GET("/", h.getClients)
+			clients.GET("/:id", h.getClient)
+			clients.PUT("/:id", h.updateClient)
+			clients.DELETE("/:id", h.deleteClient)
+		}
 
-	projects := clients.Group("/:client_id/projects")
-	{
-		projects.GET("/", h.getProjects)
-		projects.POST("/", h.createProject)
-		projects.GET("/:id", h.getProject)
-		projects.PUT("/:id", h.updateProject)
-		projects.DELETE("/:id", h.deleteProject)
-	}
+		projects := api.Group("/clients/:client_id/projects")
+		{
+			projects.GET("/", h.getProjects)
+			projects.POST("/", h.createProject)
+			projects.GET("/:id", h.getProject)
+			projects.PUT("/:id", h.updateProject)
+			projects.DELETE("/:id", h.deleteProject)
+		}
 
-	threads := h.router.Group("/projects/:project_id/threads")
-	{
-		threads.GET("/", h.getThreads)
-		threads.POST("/", h.createThread)
-		threads.GET("/:id", h.getThread)
-		threads.PUT("/:id", h.updateThread)
-		threads.DELETE("/:id", h.deleteThread)
-	}
+		threads := api.Group("/projects/:project_id/threads")
+		{
+			threads.GET("/", h.getThreads)
+			threads.POST("/", h.createThread)
+			threads.GET("/:id", h.getThread)
+			threads.PUT("/:id", h.updateThread)
+			threads.DELETE("/:id", h.deleteThread)
+		}
 
-	camps := h.router.Group("/campaigns")
-	{
-		camps.GET("/", h.getCampaigns)
-		camps.PUT("/:id", h.attachCampaign)
-		camps.POST("/:id", h.assignCampaign)
-	}
+		camps := api.Group("/campaigns")
+		{
+			camps.GET("/", h.getCampaigns)
+			camps.PUT("/:id", h.attachCampaign)
+			camps.POST("/:id", h.assignCampaign)
+		}
 
-	stats := h.router.Group("/statistic")
-	{
-		stats.GET("/projects/:id", h.getProjectStat)
-		stats.GET("/threads/:thread_id", h.getThreadStat)
-		stats.GET("/camps/:camp_id", h.getCampStat)
-		stats.GET("/targetologs/:target_id", h.getTargetologStat)
-		stats.GET("/targetologs/:target_id/camps/:camp_id", h.getTargetologCampaignFullStat)
+		stats := api.Group("/statistic")
+		{
+			stats.GET("/projects/:id", h.getProjectStat)
+			stats.GET("/threads/:thread_id", h.getThreadStat)
+			stats.GET("/camps/:camp_id", h.getCampStat)
+			stats.GET("/targetologs/:target_id", h.getTargetologStat)
+			stats.GET("/targetologs/:target_id/camps/:camp_id", h.getTargetologCampaignFullStat)
+		}
 	}
 }
