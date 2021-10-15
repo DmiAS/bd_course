@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"bytes"
 	"time"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -15,9 +14,9 @@ import (
 const algHeader = "alg"
 
 func comparePassword(password string, auth *models.Auth) error {
-	bp := bytes.NewBufferString(password)
-	bs := bytes.NewBufferString(auth.Salt)
-	encP, err := gen.PasswordWithSalt(bp.Bytes(), bs.Bytes())
+	bp := []byte(password)
+	bs := []byte(auth.Salt)
+	encP, err := gen.PasswordWithSalt(bp, bs)
 	if err != nil {
 		return err
 	}

@@ -31,7 +31,7 @@ func (s *Service) Login(login, password string) (string, error) {
 		return "", err
 	}
 
-	return "", nil
+	return s.createToken(auth.UserID)
 }
 
 func (s *Service) GetRoleInfo(tokenStr string) (*models.IDs, error) {
