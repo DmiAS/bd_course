@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/base64"
+
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/DmiAS/bd_course/internal/pkg/gen"
@@ -16,6 +17,19 @@ type authInfo struct {
 	password []byte
 	salt     []byte
 	id       uuid.UUID
+}
+
+func (s *Service) Login(login, password string) (string, error) {
+	rep := s.unit.GetAuthRepository()
+	auth, err := rep.GetAuth(login)
+	if err != nil {
+		return "", err
+	}
+	if err := comparePassword(password, auth); err != nil {
+		return "", err
+	}
+
+	return "", nil
 }
 
 func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error) {

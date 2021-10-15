@@ -25,6 +25,8 @@ type ICampaignRepository interface {
 }
 
 type IAuthRepository interface {
+	GetRole(id uuid.UUID) (string, error)
+	GetAuth(login string) (*models.Auth, error)
 	Create(auth *models.Auth) error
 	CreateIdRow(role string) (uuid.UUID, error)
 	Update(auth *models.Auth) error

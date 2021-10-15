@@ -14,6 +14,26 @@ func NewAuthRepository(db *gorm.DB) *AuthRepository {
 	return &AuthRepository{db: db}
 }
 
+func (a AuthRepository) GetAuth(login string) (*models.Auth, error) {
+	auth := &models.Auth{}
+	if err := a.db.Model(&models.Auth{}).Where("login = ?", login).First(auth).Error; err != nil {
+		return nil, err
+	}
+	return auth, nil
+}
+
+func (a AuthRepository) GetRole(id uuid.UUID) (string, error) {
+	var role string
+	if err := a.db.Model(&models.IDs{}).
+		Select("role").
+		Where("id = ?", id).
+		Scan(&role).
+		Error; err != nil {
+		return "", err
+	}
+	return role, nil
+}
+
 func (a AuthRepository) CreateIdRow(role string) (uuid.UUID, error) {
 	id := models.IDs{ID: uuid.New(), Role: role}
 	result := a.db.Create(&id)
