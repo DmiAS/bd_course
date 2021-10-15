@@ -38,7 +38,7 @@ type IProjectRepository interface {
 	Get(projectID uuid.UUID) (*models.Project, error)
 	GetAll(clientID uuid.UUID) models.Projects
 	Update(project *models.Project) error
-	Delete(clientID, projectID uuid.UUID) error
+	Delete(projectID uuid.UUID) error
 }
 
 type IThreadRepository interface {
@@ -46,7 +46,7 @@ type IThreadRepository interface {
 	Get(threadID uuid.UUID) (*models.Thread, error)
 	GetAll(projectID uuid.UUID) models.Threads
 	Update(thread *models.Thread) error
-	Delete(projectID, threadID uuid.UUID) error
+	Delete(threadID uuid.UUID) error
 }
 
 type IClientRepository interface {

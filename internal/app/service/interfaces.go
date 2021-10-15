@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -40,22 +42,22 @@ type IClientService interface {
 
 type IProjectService interface {
 	Create(project *models.Project) error
-	Get(clientID, projectID uuid.UUID) (*models.Project, error)
+	Get(projectID uuid.UUID) (*models.Project, error)
 	GetAll(clientID uuid.UUID) *models.ProjectsList
 	Update(project *models.Project) error
-	Delete(clientID, projectID uuid.UUID) error
+	Delete(projectID uuid.UUID) error
 }
 
 type IThreadService interface {
 	Create(thread *models.Thread) error
-	Get(projectID, threadID uuid.UUID) (*models.Thread, error)
+	Get(threadID uuid.UUID) (*models.Thread, error)
 	GetAll(projectID uuid.UUID) *models.ThreadsList
 	Update(thread *models.Thread) error
-	Delete(projectID, threadID uuid.UUID) error
+	Delete(threadID uuid.UUID) error
 }
 
 type IStatService interface {
-	GetProjectStat(projectID uuid.UUID) (*models.ProjectStat, error)
-	GetThreadStat(threadID uuid.UUID) (*models.ThreadStat, error)
-	GetTargetologStat(targetologID uuid.UUID) (*models.TargetologStat, error)
+	GetProjectStat(projectID uuid.UUID, from, to time.Time) (*models.ProjectStat, error)
+	GetThreadStat(threadID uuid.UUID, from, to time.Time) (*models.ThreadStat, error)
+	GetTargetologStat(targetologID uuid.UUID, from, to time.Time) (*models.TargetologStat, error)
 }

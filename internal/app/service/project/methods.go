@@ -10,9 +10,9 @@ func (s Service) Create(project *models.Project) error {
 	return ps.Create(project)
 }
 
-func (s Service) Get(clientID, projectID uuid.UUID) (*models.Project, error) {
+func (s Service) Get(projectID uuid.UUID) (*models.Project, error) {
 	ps := s.unit.GetProjectRepository()
-	return ps.Get(clientID, projectID)
+	return ps.Get(projectID)
 }
 
 func (s Service) GetAll(clientID uuid.UUID) *models.ProjectsList {
@@ -26,7 +26,7 @@ func (s Service) Update(project *models.Project) error {
 	return ps.Update(project)
 }
 
-func (s Service) Delete(clientID, projectID uuid.UUID) error {
+func (s Service) Delete(projectID uuid.UUID) error {
 	ps := s.unit.GetProjectRepository()
-	return ps.Delete(clientID, projectID)
+	return ps.Delete(projectID)
 }

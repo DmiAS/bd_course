@@ -10,9 +10,9 @@ func (s Service) Create(thread *models.Thread) error {
 	return rep.Create(thread)
 }
 
-func (s Service) Get(projectID, threadID uuid.UUID) (*models.Thread, error) {
+func (s Service) Get(threadID uuid.UUID) (*models.Thread, error) {
 	rep := s.unit.GetThreadsRepository()
-	return rep.Get(projectID, threadID)
+	return rep.Get(threadID)
 }
 
 func (s Service) GetAll(projectID uuid.UUID) *models.ThreadsList {
@@ -26,7 +26,7 @@ func (s Service) Update(thread *models.Thread) error {
 	return rep.Update(thread)
 }
 
-func (s Service) Delete(projectID, threadID uuid.UUID) error {
+func (s Service) Delete(threadID uuid.UUID) error {
 	rep := s.unit.GetThreadsRepository()
-	return rep.Delete(projectID, threadID)
+	return rep.Delete(threadID)
 }

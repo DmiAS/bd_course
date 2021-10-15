@@ -5,18 +5,26 @@ import (
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
+type threadInfo struct {
+	Name      string    `json:"name"`
+	ProjectID uuid.UUID `json:"project_id"`
+	ThreadID  uuid.UUID `param:"thread_id"`
+}
+
 func (h *Handler) createThread(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &threadInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(uwork.Admin)
 	if err := ts.Create(&models.Thread{
-		Name: data.Name,
+		ProjectID: data.ProjectID,
+		Name:      data.Name,
 	}); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -25,12 +33,12 @@ func (h *Handler) createThread(ctx echo.Context) error {
 }
 
 func (h *Handler) getThread(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &threadInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ts := h.tf.GetService(uwork.Admin)
-	thread, err := ts.Get(data.rootID, data.id)
+	thread, err := ts.Get(data.ThreadID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -38,25 +46,25 @@ func (h *Handler) getThread(ctx echo.Context) error {
 }
 
 func (h *Handler) getThreads(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &threadInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ts := h.tf.GetService(uwork.Admin)
-	threads := ts.GetAll(data.rootID)
+	threads := ts.GetAll(data.ProjectID)
 	return ctx.JSON(http.StatusOK, threads)
 }
 
 func (h *Handler) updateThread(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &threadInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(uwork.Admin)
 	if err := ts.Update(&models.Thread{
-		ID:        data.id,
-		ProjectID: data.rootID,
+		ID:        data.ThreadID,
+		ProjectID: data.ProjectID,
 		Name:      data.Name,
 	}); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -66,13 +74,13 @@ func (h *Handler) updateThread(ctx echo.Context) error {
 }
 
 func (h *Handler) deleteThread(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &threadInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(uwork.Admin)
-	if err := ts.Delete(data.rootID, data.id); err != nil {
+	if err := ts.Delete(data.ThreadID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 

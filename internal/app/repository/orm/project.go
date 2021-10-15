@@ -20,7 +20,7 @@ func (p ProjectRepository) Create(project *models.Project) error {
 
 func (p ProjectRepository) Update(project *models.Project) error {
 	return p.db.
-		Where("client_id = ? and id = ?", project.ClientID, project.ID).Updates(project).Error
+		Where("id = ?", project.ClientID, project.ID).Updates(project).Error
 }
 
 func (p ProjectRepository) Get(projectID uuid.UUID) (*models.Project, error) {
@@ -29,8 +29,8 @@ func (p ProjectRepository) Get(projectID uuid.UUID) (*models.Project, error) {
 	return project, res.Error
 }
 
-func (p ProjectRepository) Delete(clientID, projectID uuid.UUID) error {
-	return p.db.Where("client_id = ? and id = ?", clientID, projectID).Delete(&models.Projects{}).Error
+func (p ProjectRepository) Delete(projectID uuid.UUID) error {
+	return p.db.Where("id = ?", projectID).Delete(&models.Projects{}).Error
 }
 
 func (p ProjectRepository) GetAll(clientID uuid.UUID) models.Projects {

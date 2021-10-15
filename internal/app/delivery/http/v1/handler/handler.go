@@ -76,16 +76,16 @@ func (h *Handler) initRoutes() {
 			clients.DELETE("/:id", h.deleteClient)
 		}
 
-		projects := api.Group("/clients/:client_id/projects")
+		projects := api.Group("/projects")
 		{
-			projects.GET("/", h.getProjects)
+			projects.GET("/", h.getClientProjects)
 			projects.POST("/", h.createProject)
 			projects.GET("/:id", h.getProject)
 			projects.PUT("/:id", h.updateProject)
 			projects.DELETE("/:id", h.deleteProject)
 		}
 
-		threads := api.Group("/projects/:project_id/threads")
+		threads := api.Group("/threads")
 		{
 			threads.GET("/", h.getThreads)
 			threads.POST("/", h.createThread)

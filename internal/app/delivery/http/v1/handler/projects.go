@@ -5,18 +5,26 @@ import (
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
+type projectInfo struct {
+	Name      string    `json:"name"`
+	ClientID  uuid.UUID `json:"client_id"`
+	ProjectID uuid.UUID `param:"project_id"`
+}
+
 func (h *Handler) createProject(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &projectInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ps := h.pf.GetService(uwork.Admin)
 	if err := ps.Create(&models.Project{
-		Name: data.Name,
+		ClientID: data.ClientID,
+		Name:     data.Name,
 	}); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -25,38 +33,38 @@ func (h *Handler) createProject(ctx echo.Context) error {
 }
 
 func (h *Handler) getProject(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &projectInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ps := h.pf.GetService(uwork.Admin)
-	project, err := ps.Get(data.rootID, data.id)
+	project, err := ps.Get(data.ProjectID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.JSON(http.StatusOK, project)
 }
 
-func (h *Handler) getProjects(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+func (h *Handler) getClientProjects(ctx echo.Context) error {
+	data := &projectInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ps := h.pf.GetService(uwork.Admin)
-	projects := ps.GetAll(data.rootID)
+	projects := ps.GetAll(data.ClientID)
 	return ctx.JSON(http.StatusOK, projects)
 }
 
 func (h *Handler) updateProject(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &projectInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ps := h.pf.GetService(uwork.Admin)
 	if err := ps.Update(&models.Project{
-		ID:       data.id,
-		ClientID: data.rootID,
+		ID:       data.ProjectID,
+		ClientID: data.ClientID,
 		Name:     data.Name,
 	}); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -66,13 +74,13 @@ func (h *Handler) updateProject(ctx echo.Context) error {
 }
 
 func (h *Handler) deleteProject(ctx echo.Context) error {
-	data := &info{}
-	if err := data.bind(ctx); err != nil {
+	data := &projectInfo{}
+	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ps := h.pf.GetService(uwork.Admin)
-	if err := ps.Delete(data.rootID, data.id); err != nil {
+	if err := ps.Delete(data.ProjectID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 

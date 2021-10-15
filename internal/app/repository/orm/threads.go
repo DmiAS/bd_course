@@ -29,11 +29,11 @@ func (t ThreadRepository) GetAll(projectID uuid.UUID) models.Threads {
 
 func (t ThreadRepository) Update(thread *models.Thread) error {
 	return t.db.
-		Where("project_id = ? and id = ?", thread.ProjectID, thread.ID).Updates(thread).Error
+		Where("id = ?", thread.ID).Updates(thread).Error
 }
 
-func (t ThreadRepository) Delete(projectID, threadID uuid.UUID) error {
-	return t.db.Where("project_id = ? and id = ?", projectID, threadID).Delete(&models.Projects{}).Error
+func (t ThreadRepository) Delete(threadID uuid.UUID) error {
+	return t.db.Where("id = ?", threadID).Delete(&models.Projects{}).Error
 }
 
 func NewThreadRepository(db *gorm.DB) *ThreadRepository {

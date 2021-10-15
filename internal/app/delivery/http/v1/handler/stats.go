@@ -1,6 +1,15 @@
 package handler
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+)
+
+type stat struct {
+	From string    `json:"from"`
+	To   string    `json:"to"`
+	ID   uuid.UUID `param:"id"`
+}
 
 func (h *Handler) getProjectStat(ctx echo.Context) error {
 	return nil
