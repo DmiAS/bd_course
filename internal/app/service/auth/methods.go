@@ -45,26 +45,21 @@ func (s *Service) GetRoleInfo(tokenStr string) (*models.UserInfo, error) {
 }
 
 func (s *Service) Create(firstName, lastName string, role models.Role) (*models.Auth, error) {
-	var info *models.Auth
+	info := &models.Auth{
+		Login:    gen.Login(firstName, lastName),
+		Password: gen.GenReadableString(passwordSize),
+		UserID:   uuid.New(),
+		Role:     role,
+	}
+
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
 		auth := u.GetAuthRepository()
-
-		password := gen.GenReadableString(passwordSize)
-		login := gen.Login(firstName, lastName)
-		id := uuid.New()
-
-		encInfo, err := createAuthInfo(id, login, password)
+		encInfo, err := encryptInfo(info)
 		if err != nil {
 			return err
 		}
 		if err := auth.Create(encInfo); err != nil {
 			return err
-		}
-		info = &models.Auth{
-			Login:    login,
-			Password: password,
-			UserID:   id,
-			Role:     role,
 		}
 		return nil
 	}); err != nil {
@@ -74,7 +69,7 @@ func (s *Service) Create(firstName, lastName string, role models.Role) (*models.
 }
 
 func (s *Service) Update(info *models.Auth) error {
-	encInfo, err := createAuthInfo(info.UserID, info.Login, info.Password)
+	encInfo, err := encryptInfo(info)
 	if err != nil {
 		return err
 	}
@@ -88,22 +83,23 @@ func (s *Service) Delete(id uuid.UUID) error {
 	return ar.Delete(id)
 }
 
-func createAuthInfo(id uuid.UUID, login string, password string) (*models.Auth, error) {
+func encryptInfo(info *models.Auth) (*models.Auth, error) {
 	salt, err := gen.GenerateRandomString(saltSize)
 	if err != nil {
 		return nil, err
 	}
-	encP, err := gen.PasswordWithSalt([]byte(password), salt)
+	encP, err := gen.PasswordWithSalt([]byte(info.Password), salt)
+
 	if err != nil {
 		return nil, err
 	}
 	auth := &models.Auth{
-		Login:    login,
+		Login:    info.Login,
 		Password: bytesToString(encP),
 		Salt:     bytesToString(salt),
-		UserID:   id,
+		UserID:   info.UserID,
+		Role:     info.Role,
 	}
-
 	return auth, nil
 }
 

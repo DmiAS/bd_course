@@ -105,6 +105,5 @@ func createUser(worker *models.WorkerEntity) *models.User {
 		LastName:  worker.LastName,
 		VkLink:    worker.VkLink,
 		TgLink:    worker.TgLink,
-		Role:      worker.Role,
 	}
 }

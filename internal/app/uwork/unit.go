@@ -16,10 +16,10 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	conn = db
+	Conn = db
 }
 
-var conn *gorm.DB
+var Conn *gorm.DB
 
 type Unit struct {
 	db *gorm.DB
@@ -82,5 +82,5 @@ func getConnection(role models.Role) *gorm.DB {
 	//	return nil, errors.New("invalid access role")
 	//}
 	//return conn, nil
-	return conn
+	return Conn
 }

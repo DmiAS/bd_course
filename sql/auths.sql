@@ -1,7 +1,7 @@
 create table if not exists auths (
-    login varchar(32) unique,
-    password varchar(256),
-    salt varchar(32),
-    user_id uuid,
-    foreign key(user_id) references ids(id) on delete cascade
+    login varchar(32) unique not null,
+    password varchar(256) not null,
+    salt varchar(32) not null,
+    role varchar(16) CHECK ( role in ('admin', 'worker', 'client')),
+    user_id uuid primary key
 );
