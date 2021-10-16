@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -9,22 +10,45 @@ import (
 )
 
 type projectInfo struct {
-	Name      string    `json:"name"`
-	ClientID  uuid.UUID `json:"client_id"`
-	ProjectID uuid.UUID `param:"project_id"`
+	Name      string
+	ClientID  uuid.UUID
+	ProjectID uuid.UUID
+}
+
+func (p *projectInfo) bind(ctx echo.Context) error {
+	p.Name = ctx.QueryParam("name")
+	cid := ctx.QueryParam("client_id")
+	if cid != "" {
+		var err error
+		p.ClientID, err = uuid.Parse(cid)
+		if err != nil {
+			return err
+		}
+	}
+	pid := ctx.Param("id")
+	if pid != "" {
+		var err error
+		p.ProjectID, err = uuid.Parse(pid)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *Handler) createProject(ctx echo.Context) error {
 	data := &projectInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ps := h.pf.GetService(models.AdminRole)
-	if err := ps.Create(&models.Project{
-		ClientID: data.ClientID,
-		Name:     data.Name,
-	}); err != nil {
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	ps := h.pf.GetService(info.Role)
+	if err := ps.Create(data.ClientID, data.Name); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
@@ -33,10 +57,16 @@ func (h *Handler) createProject(ctx echo.Context) error {
 
 func (h *Handler) getProject(ctx echo.Context) error {
 	data := &projectInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ps := h.pf.GetService(models.AdminRole)
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	ps := h.pf.GetService(info.Role)
 	project, err := ps.Get(data.ProjectID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
@@ -46,21 +76,32 @@ func (h *Handler) getProject(ctx echo.Context) error {
 
 func (h *Handler) getClientProjects(ctx echo.Context) error {
 	data := &projectInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ps := h.pf.GetService(models.AdminRole)
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	ps := h.pf.GetService(info.Role)
 	projects := ps.GetAll(data.ClientID)
 	return ctx.JSON(http.StatusOK, projects)
 }
 
 func (h *Handler) updateProject(ctx echo.Context) error {
 	data := &projectInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
 
-	ps := h.pf.GetService(models.AdminRole)
+	ps := h.pf.GetService(info.Role)
 	if err := ps.Update(&models.Project{
 		ID:       data.ProjectID,
 		ClientID: data.ClientID,
@@ -74,7 +115,7 @@ func (h *Handler) updateProject(ctx echo.Context) error {
 
 func (h *Handler) deleteProject(ctx echo.Context) error {
 	data := &projectInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 

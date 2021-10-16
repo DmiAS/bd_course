@@ -86,8 +86,8 @@ func (h *Handler) initRoutes() {
 
 		projects := api.Group("/projects")
 		{
-			projects.GET("/:client_id", h.getClientProjects)
-			projects.POST("/:client_id", h.createProject)
+			projects.GET("", h.getClientProjects)
+			projects.POST("", h.createProject)
 			projects.GET("/:id", h.getProject)
 			projects.PUT("/:id", h.updateProject)
 			projects.DELETE("/:id", h.deleteProject)

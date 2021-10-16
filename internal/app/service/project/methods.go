@@ -5,8 +5,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) Create(project *models.Project) error {
+func (s Service) Create(clientID uuid.UUID, name string) error {
 	ps := s.unit.GetProjectRepository()
+	project := &models.Project{
+		ID:       uuid.New(),
+		ClientID: clientID,
+		Name:     name,
+	}
 	return ps.Create(project)
 }
 

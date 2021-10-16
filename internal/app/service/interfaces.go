@@ -41,7 +41,7 @@ type ICampaignService interface {
 }
 
 type IProjectService interface {
-	Create(project *models.Project) error
+	Create(clientID uuid.UUID, name string) error
 	Get(projectID uuid.UUID) (*models.Project, error)
 	GetAll(clientID uuid.UUID) *models.ProjectsList
 	Update(project *models.Project) error
