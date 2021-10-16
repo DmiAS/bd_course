@@ -75,10 +75,10 @@ func (h *Handler) initRoutes() {
 			auth.PUT("/:id", h.updateAuth)
 		}
 
-		clients := api.Group("/user")
+		clients := api.Group("/clients")
 		{
-			clients.POST("/", h.createClient)
-			clients.GET("/", h.getClients)
+			clients.POST("", h.createClient)
+			clients.GET("", h.getClients)
 			clients.GET("/:id", h.getClient)
 			clients.PUT("/:id", h.updateClient)
 			clients.DELETE("/:id", h.deleteClient)
