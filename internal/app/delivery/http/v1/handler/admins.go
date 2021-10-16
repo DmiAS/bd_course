@@ -14,6 +14,10 @@ func (h *Handler) createAdmin(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	//if info.Role != models.AdminRole{
+	//	return ctx.String(http.StatusBadRequest, "permission denied")
+	//}
+
 	admin := &models.User{Role: models.AdminRole}
 	if err := ctx.Bind(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -37,21 +41,21 @@ func (h *Handler) updateAdmin(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	targetID, err := extractID(ctx)
+	if err != nil {
+		return ctx.String(http.StatusBadRequest, "invalid uuid")
+	}
+
+	//if info.Role != models.AdminRole || info.ID != targetID{
+	//	return ctx.String(http.StatusBadRequest, "permission denied")
+	//}
 
 	admin := &models.User{}
 	if err := ctx.Bind(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
-	targetID, err := extractID(ctx)
-	if err != nil {
-		return ctx.String(http.StatusBadRequest, "invalid uuid")
-	}
-	if targetID != info.ID {
-		return ctx.String(http.StatusBadRequest, "you can't modify strangers account")
-	}
-
 	admin.ID = targetID
+
 	us := h.uf.GetService(info.Role)
 	if err := us.Update(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -66,6 +70,9 @@ func (h *Handler) getAdmins(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	//if info.Role != models.AdminRole{
+	//	return ctx.String(http.StatusBadRequest, "permission denied")
+	//}
 
 	us := h.uf.GetService(info.Role)
 	admins := us.GetAll(models.AdminRole)
@@ -78,11 +85,14 @@ func (h *Handler) getAdmin(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
 	targetID, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
+
+	//if info.Role != models.AdminRole || info.ID == targetID{
+	//	return ctx.String(http.StatusBadRequest, "permission denied")
+	//}
 
 	us := h.uf.GetService(info.Role)
 	admin, err := us.Get(targetID)

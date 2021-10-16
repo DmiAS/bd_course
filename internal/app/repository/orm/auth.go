@@ -40,7 +40,7 @@ func (a AuthRepository) Create(auth *models.Auth) error {
 }
 
 func (a AuthRepository) Delete(id uuid.UUID) error {
-	return a.db.Where("id = ?", id).Delete(&models.Auth{}).Error
+	return a.db.Where("user_id = ?", id).Delete(&models.Auth{}).Error
 }
 
 func (a AuthRepository) Update(info *models.Auth) error {
