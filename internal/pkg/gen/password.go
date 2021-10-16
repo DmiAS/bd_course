@@ -12,6 +12,9 @@ import (
 
 const chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
 
+func init() {
+	random.Seed(time.Now().Unix())
+}
 func GenReadableString(size int) string {
 	length := len(chars)
 	res := make([]byte, size)

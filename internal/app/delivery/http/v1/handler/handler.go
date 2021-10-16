@@ -56,7 +56,7 @@ func (h *Handler) initRoutes() {
 		{
 			admins.POST("", h.createAdmin)
 			admins.GET("", h.getAdmins)
-			admins.GET("/:id", h.getAdmins)
+			admins.GET("/:id", h.getAdmin)
 			admins.PUT("/:id", h.updateAdmin)
 		}
 

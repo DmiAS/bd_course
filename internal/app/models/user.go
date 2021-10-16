@@ -51,7 +51,7 @@ type User struct {
 	LastName  string    `json:"last_name"`
 	VkLink    string    `json:"vk_link"`
 	TgLink    string    `json:"tg_link"`
-	Role      Role
+	Role      Role      `json:"-"`
 }
 type Users []User
 

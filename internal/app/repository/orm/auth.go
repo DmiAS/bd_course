@@ -26,8 +26,10 @@ func (a AuthRepository) GetAuthWithRole(login string) (*models.AuthWithRole, err
 	res := &models.AuthWithRole{}
 	if err := a.db.
 		Model(&models.Auth{}).
-		Select("login, password, salt, user_id, users.role").
-		Joins("left join users on auths.user_id = users.id and login = ?", login).First(res).Error; err != nil {
+		Select("login, password, salt, user_id, role").
+		Joins("join users on auths.user_id = users.id and login = ?", login).
+		First(res).
+		Error; err != nil {
 		return nil, err
 	}
 	return res, nil
