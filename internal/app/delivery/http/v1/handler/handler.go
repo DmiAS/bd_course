@@ -13,7 +13,7 @@ type Handler struct {
 
 	wf   *service.WorkerFactory
 	af   *service.AuthFactory
-	cf   *service.ClientFactory
+	uf   *service.UserFactory
 	pf   *service.ProjectFactory
 	tf   *service.ThreadFactory
 	cmpf *service.CampaignFactory
@@ -23,7 +23,7 @@ type Handler struct {
 func NewHandler(
 	wf *service.WorkerFactory,
 	af *service.AuthFactory,
-	cf *service.ClientFactory,
+	uf *service.UserFactory,
 	pf *service.ProjectFactory,
 	tf *service.ThreadFactory,
 	cmpf *service.CampaignFactory,
@@ -33,7 +33,7 @@ func NewHandler(
 		router: router,
 		wf:     wf,
 		af:     af,
-		cf:     cf,
+		uf:     uf,
 		tf:     tf,
 		pf:     pf,
 		sf:     sf,
@@ -52,6 +52,14 @@ func (h *Handler) initRoutes() {
 	h.router.POST("/login", h.login)
 	api := h.router.Group("/api/v1", h.auth)
 	{
+		admins := api.Group("/admins")
+		{
+			admins.POST("", h.createAdmin)
+			admins.GET("", h.getAdmins)
+			admins.GET("/:id", h.getAdmins)
+			admins.PUT("/:id", h.updateAdmin)
+		}
+
 		workers := api.Group("/workers")
 		{
 			workers.POST("", h.createWorker)
@@ -67,7 +75,7 @@ func (h *Handler) initRoutes() {
 			auth.PUT("/:id", h.updateAuth)
 		}
 
-		clients := api.Group("/clients")
+		clients := api.Group("/user")
 		{
 			clients.POST("/", h.createClient)
 			clients.GET("/", h.getClients)
@@ -78,8 +86,8 @@ func (h *Handler) initRoutes() {
 
 		projects := api.Group("/projects")
 		{
-			projects.GET("/", h.getClientProjects)
-			projects.POST("/", h.createProject)
+			projects.GET("/:client_id", h.getClientProjects)
+			projects.POST("/:client_id", h.createProject)
 			projects.GET("/:id", h.getProject)
 			projects.PUT("/:id", h.updateProject)
 			projects.DELETE("/:id", h.deleteProject)

@@ -1,4 +1,4 @@
-package clients
+package user
 
 import (
 	"github.com/DmiAS/bd_course/internal/app/uwork"

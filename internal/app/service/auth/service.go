@@ -13,7 +13,7 @@ type Service struct {
 }
 
 const (
-	defaultExpireDuration = time.Minute * 30
+	defaultExpireDuration = time.Hour * 30
 	signKey               = "key"
 )
 

@@ -8,20 +8,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) createClient(ctx echo.Context) error {
+func (h *Handler) createAdmin(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
-	client := &models.User{}
-	if err := ctx.Bind(client); err != nil {
+	admin := &models.User{}
+	if err := ctx.Bind(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	us := h.uf.GetService(info.Role)
-	auth, err := us.Create(client, models.ClientRole)
+	auth, err := us.Create(admin, models.AdminRole)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -32,15 +31,15 @@ func (h *Handler) createClient(ctx echo.Context) error {
 	})
 }
 
-func (h *Handler) updateClient(ctx echo.Context) error {
+func (h *Handler) updateAdmin(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
 
-	client := &models.User{}
-	if err := ctx.Bind(client); err != nil {
+	admin := &models.User{}
+	if err := ctx.Bind(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -48,35 +47,32 @@ func (h *Handler) updateClient(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
-	if info.Role != models.AdminRole && info.ID != targetID {
-		return ctx.String(http.StatusBadRequest, "you can't update other clients accounts")
+	if targetID != info.ID {
+		return ctx.String(http.StatusBadRequest, "you can't modify strangers account")
 	}
 
-	client.ID = targetID
+	admin.ID = targetID
 	us := h.uf.GetService(info.Role)
-	if err := us.Update(client); err != nil {
+	if err := us.Update(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	return ctx.NoContent(http.StatusOK)
 }
 
-func (h *Handler) getClients(ctx echo.Context) error {
+func (h *Handler) getAdmins(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
 
-	if info.Role == models.ClientRole {
-		return ctx.String(http.StatusBadRequest, "you can't watch other clients")
-	}
 	us := h.uf.GetService(info.Role)
 	admins := us.GetAll()
 	return ctx.JSON(http.StatusOK, admins)
 }
 
-func (h *Handler) getClient(ctx echo.Context) error {
+func (h *Handler) getAdmin(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
@@ -87,9 +83,7 @@ func (h *Handler) getClient(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
-	if info.Role == models.ClientRole && info.ID != targetID {
-		return ctx.String(http.StatusBadRequest, "you can't watch other clients")
-	}
+
 	us := h.uf.GetService(info.Role)
 	admin, err := us.Get(targetID)
 	if err != nil {
@@ -97,26 +91,4 @@ func (h *Handler) getClient(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, admin)
-}
-
-func (h *Handler) deleteClient(ctx echo.Context) error {
-	info, err := extractUserInfo(ctx)
-	if err != nil {
-		log.Println(err)
-		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
-	}
-
-	targetID, err := extractID(ctx)
-	if err != nil {
-		return ctx.String(http.StatusBadRequest, "invalid uuid")
-	}
-	if info.Role != models.AdminRole && info.ID != targetID {
-		return ctx.String(http.StatusBadRequest, "you can't delete clients")
-	}
-
-	as := h.af.GetService(info.Role)
-	if err := as.Delete(targetID); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
-	return ctx.NoContent(http.StatusOK)
 }

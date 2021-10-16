@@ -1,12 +1,13 @@
 package service
 
 import (
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/service/auth"
 	"github.com/DmiAS/bd_course/internal/app/service/campaign"
-	"github.com/DmiAS/bd_course/internal/app/service/clients"
 	"github.com/DmiAS/bd_course/internal/app/service/project"
 	"github.com/DmiAS/bd_course/internal/app/service/stat"
 	"github.com/DmiAS/bd_course/internal/app/service/thread"
+	"github.com/DmiAS/bd_course/internal/app/service/user"
 	"github.com/DmiAS/bd_course/internal/app/service/worker"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 )
@@ -18,7 +19,7 @@ type WorkerFactory struct {
 func NewWorkerFactory(u uwork.UnitOfWork) *WorkerFactory {
 	return &WorkerFactory{unit: u}
 }
-func (w WorkerFactory) GetService(role uwork.Role) IWorkerService {
+func (w WorkerFactory) GetService(role models.Role) IWorkerService {
 	unit := w.unit.WithRole(role)
 	return worker.NewService(unit)
 }
@@ -30,21 +31,21 @@ type AuthFactory struct {
 func NewAuthFactory(u uwork.UnitOfWork) *AuthFactory {
 	return &AuthFactory{unit: u}
 }
-func (a AuthFactory) GetService(role uwork.Role) IAuthService {
+func (a AuthFactory) GetService(role models.Role) IAuthService {
 	unit := a.unit.WithRole(role)
 	return auth.NewService(unit)
 }
 
-type ClientFactory struct {
+type UserFactory struct {
 	unit uwork.UnitOfWork
 }
 
-func NewClientFactory(u uwork.UnitOfWork) *ClientFactory {
-	return &ClientFactory{unit: u}
+func NewUserFactory(u uwork.UnitOfWork) *UserFactory {
+	return &UserFactory{unit: u}
 }
-func (c ClientFactory) GetService(role uwork.Role) IClientService {
-	unit := c.unit.WithRole(role)
-	return clients.NewService(unit)
+func (u UserFactory) GetService(role models.Role) IUserService {
+	unit := u.unit.WithRole(role)
+	return user.NewService(unit)
 }
 
 type ProjectFactory struct {
@@ -54,7 +55,7 @@ type ProjectFactory struct {
 func NewProjectFactory(u uwork.UnitOfWork) *ProjectFactory {
 	return &ProjectFactory{unit: u}
 }
-func (p ProjectFactory) GetService(role uwork.Role) IProjectService {
+func (p ProjectFactory) GetService(role models.Role) IProjectService {
 	unit := p.unit.WithRole(role)
 	return project.NewService(unit)
 }
@@ -66,7 +67,7 @@ type ThreadFactory struct {
 func NewThreadFactory(u uwork.UnitOfWork) *ThreadFactory {
 	return &ThreadFactory{unit: u}
 }
-func (t ThreadFactory) GetService(role uwork.Role) IThreadService {
+func (t ThreadFactory) GetService(role models.Role) IThreadService {
 	unit := t.unit.WithRole(role)
 	return thread.NewService(unit)
 }
@@ -78,7 +79,7 @@ type CampaignFactory struct {
 func NewCampaignsFactory(u uwork.UnitOfWork) *CampaignFactory {
 	return &CampaignFactory{unit: u}
 }
-func (c CampaignFactory) GetService(role uwork.Role) ICampaignService {
+func (c CampaignFactory) GetService(role models.Role) ICampaignService {
 	unit := c.unit.WithRole(role)
 	return campaign.NewService(unit)
 }
@@ -90,7 +91,7 @@ type StatsFactory struct {
 func NewStatsFactory(u uwork.UnitOfWork) *StatsFactory {
 	return &StatsFactory{unit: u}
 }
-func (s StatsFactory) GetService(role uwork.Role) IStatService {
+func (s StatsFactory) GetService(role models.Role) IStatService {
 	unit := s.unit.WithRole(role)
 	return stat.NewService(unit)
 }

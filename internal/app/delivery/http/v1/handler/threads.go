@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
-	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -21,7 +20,7 @@ func (h *Handler) createThread(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ts := h.tf.GetService(uwork.Admin)
+	ts := h.tf.GetService(models.AdminRole)
 	if err := ts.Create(&models.Thread{
 		ProjectID: data.ProjectID,
 		Name:      data.Name,
@@ -37,7 +36,7 @@ func (h *Handler) getThread(ctx echo.Context) error {
 	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ts := h.tf.GetService(uwork.Admin)
+	ts := h.tf.GetService(models.AdminRole)
 	thread, err := ts.Get(data.ThreadID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
@@ -50,7 +49,7 @@ func (h *Handler) getThreads(ctx echo.Context) error {
 	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ts := h.tf.GetService(uwork.Admin)
+	ts := h.tf.GetService(models.AdminRole)
 	threads := ts.GetAll(data.ProjectID)
 	return ctx.JSON(http.StatusOK, threads)
 }
@@ -61,7 +60,7 @@ func (h *Handler) updateThread(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ts := h.tf.GetService(uwork.Admin)
+	ts := h.tf.GetService(models.AdminRole)
 	if err := ts.Update(&models.Thread{
 		ID:        data.ThreadID,
 		ProjectID: data.ProjectID,
@@ -79,7 +78,7 @@ func (h *Handler) deleteThread(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ts := h.tf.GetService(uwork.Admin)
+	ts := h.tf.GetService(models.AdminRole)
 	if err := ts.Delete(data.ThreadID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

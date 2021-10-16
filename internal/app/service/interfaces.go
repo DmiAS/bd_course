@@ -10,8 +10,8 @@ import (
 
 type IAuthService interface {
 	Login(login, password string) (string, error)
-	GetRoleInfo(tokenStr string) (*models.IDs, error)
-	Create(firstName, lastName, role string) (*models.Auth, error)
+	GetRoleInfo(tokenStr string) (*models.UserInfo, error)
+	Create(firstName, lastName string, role models.Role) (*models.Auth, error)
 	Delete(id uuid.UUID) error
 	Update(auth *models.Auth) error
 }
@@ -23,6 +23,13 @@ type IWorkerService interface {
 	GetAll() *models.WorkersList
 }
 
+type IUserService interface {
+	Create(user *models.User, role models.Role) (*models.Auth, error)
+	Update(user *models.User) error
+	Get(id uuid.UUID) (*models.User, error)
+	GetAll() *models.UserList
+}
+
 type ICampaignService interface {
 	GetAll() *models.CampaignsList
 	//methods to work with campaigns
@@ -31,13 +38,6 @@ type ICampaignService interface {
 	AttachCampaign(threadID, campID uuid.UUID) error
 	// назначает кампанию на таргетолога
 	AssignCampaign(targetologID, campID uuid.UUID) error
-}
-
-type IClientService interface {
-	Create(client *models.Client) (*models.Auth, error)
-	Update(client *models.Client) error
-	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() *models.ClientsList
 }
 
 type IProjectService interface {

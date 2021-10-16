@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
-	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -21,7 +20,7 @@ func (h *Handler) createProject(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ps := h.pf.GetService(uwork.Admin)
+	ps := h.pf.GetService(models.AdminRole)
 	if err := ps.Create(&models.Project{
 		ClientID: data.ClientID,
 		Name:     data.Name,
@@ -37,7 +36,7 @@ func (h *Handler) getProject(ctx echo.Context) error {
 	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ps := h.pf.GetService(uwork.Admin)
+	ps := h.pf.GetService(models.AdminRole)
 	project, err := ps.Get(data.ProjectID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
@@ -50,7 +49,7 @@ func (h *Handler) getClientProjects(ctx echo.Context) error {
 	if err := ctx.Bind(data); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ps := h.pf.GetService(uwork.Admin)
+	ps := h.pf.GetService(models.AdminRole)
 	projects := ps.GetAll(data.ClientID)
 	return ctx.JSON(http.StatusOK, projects)
 }
@@ -61,7 +60,7 @@ func (h *Handler) updateProject(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ps := h.pf.GetService(uwork.Admin)
+	ps := h.pf.GetService(models.AdminRole)
 	if err := ps.Update(&models.Project{
 		ID:       data.ProjectID,
 		ClientID: data.ClientID,
@@ -79,7 +78,7 @@ func (h *Handler) deleteProject(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ps := h.pf.GetService(uwork.Admin)
+	ps := h.pf.GetService(models.AdminRole)
 	if err := ps.Delete(data.ProjectID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

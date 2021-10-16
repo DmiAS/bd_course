@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -21,14 +21,14 @@ func (h *Handler) getTargetologCampaigns(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ws := h.cmpf.GetService(uwork.Admin)
+	ws := h.cmpf.GetService(models.AdminRole)
 	camps := ws.GetCampaigns(campID)
 	return ctx.JSON(http.StatusOK, camps)
 }
 
 // получение всех компаний, если компания привязана к конкретному
 func (h *Handler) getCampaigns(ctx echo.Context) error {
-	ws := h.cmpf.GetService(uwork.Admin)
+	ws := h.cmpf.GetService(models.AdminRole)
 	camps := ws.GetAll()
 	return ctx.JSON(http.StatusOK, camps)
 }
@@ -40,7 +40,7 @@ func (h *Handler) attachCampaign(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ws := h.cmpf.GetService(uwork.Admin)
+	ws := h.cmpf.GetService(models.AdminRole)
 	if err := ws.AttachCampaign(req.ThreadID, req.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -53,7 +53,7 @@ func (h *Handler) assignCampaign(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	ws := h.cmpf.GetService(uwork.Admin)
+	ws := h.cmpf.GetService(models.AdminRole)
 	if err := ws.AssignCampaign(req.ThreadID, req.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

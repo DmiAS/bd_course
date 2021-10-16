@@ -3,6 +3,7 @@ package uwork
 import (
 	"log"
 
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/repository"
 	"github.com/DmiAS/bd_course/internal/app/repository/orm"
 	"gorm.io/driver/postgres"
@@ -28,7 +29,7 @@ func New() *Unit {
 	return &Unit{}
 }
 
-func (u *Unit) WithRole(role Role) UnitOfWork {
+func (u *Unit) WithRole(role models.Role) UnitOfWork {
 	db := getConnection(role)
 	return &Unit{
 		db: db,
@@ -45,9 +46,9 @@ func (u *Unit) WithTransaction(f func(u UnitOfWork) error) error {
 	})
 }
 
-func (u Unit) GetClientRepository() repository.IClientRepository {
-	cr := orm.NewClientRepository(u.db)
-	return cr
+func (u Unit) GetUserRepository() repository.IUserRepository {
+	ur := orm.NewUserRepository(u.db)
+	return ur
 }
 
 func (u Unit) GetWorkerRepository() repository.IWorkerRepository {
@@ -75,7 +76,7 @@ func (u Unit) GetCampaignsRepository() repository.ICampaignRepository {
 	return cr
 }
 
-func getConnection(role Role) *gorm.DB {
+func getConnection(role models.Role) *gorm.DB {
 	//conn, ok := u.conns[role]
 	//if !ok{
 	//	return nil, errors.New("invalid access role")

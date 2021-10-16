@@ -24,10 +24,10 @@ func (s *Service) Login(login, password string) (string, error) {
 		return "", err
 	}
 
-	return s.createToken(auth.UserID)
+	return s.createToken(auth.UserID, auth.Role)
 }
 
-func (s *Service) GetRoleInfo(tokenStr string) (*models.IDs, error) {
+func (s *Service) GetRoleInfo(tokenStr string) (*models.UserInfo, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.Errorf("Unexpected signing method: %v", token.Header[algHeader])
@@ -44,17 +44,14 @@ func (s *Service) GetRoleInfo(tokenStr string) (*models.IDs, error) {
 	return s.extractIdsFromToken(token)
 }
 
-func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error) {
+func (s *Service) Create(firstName, lastName string, role models.Role) (*models.Auth, error) {
 	var info *models.Auth
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
 		auth := u.GetAuthRepository()
-		id, err := auth.CreateIdRow(role)
-		if err != nil {
-			return err
-		}
 
 		password := gen.GenReadableString(passwordSize)
 		login := gen.Login(firstName, lastName)
+		id := uuid.New()
 
 		encInfo, err := createAuthInfo(id, login, password)
 		if err != nil {
@@ -67,6 +64,7 @@ func (s *Service) Create(firstName, lastName, role string) (*models.Auth, error)
 			Login:    login,
 			Password: password,
 			UserID:   id,
+			Role:     role,
 		}
 		return nil
 	}); err != nil {

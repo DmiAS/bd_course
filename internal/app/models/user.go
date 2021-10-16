@@ -8,5 +8,16 @@ type User struct {
 	LastName  string    `json:"last_name"`
 	VkLink    string    `json:"vk_link"`
 	TgLink    string    `json:"tg_link"`
+	Role      string
 }
 type Users []User
+
+type UserList struct {
+	Amount int
+	Users  Users
+}
+
+type UserInfo struct {
+	ID   uuid.UUID
+	Role Role
+}

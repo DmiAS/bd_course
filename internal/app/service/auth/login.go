@@ -33,16 +33,11 @@ func comparePassword(password string, auth *models.Auth) error {
 }
 
 type claims struct {
-	Role string `json:"role"`
+	Role models.Role `json:"role"`
 	jwt.StandardClaims
 }
 
-func (s *Service) createToken(id uuid.UUID) (string, error) {
-	rep := s.unit.GetAuthRepository()
-	role, err := rep.GetRole(id)
-	if err != nil {
-		return "", err
-	}
+func (s *Service) createToken(id uuid.UUID, role models.Role) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims{
 		Role: role,
 		StandardClaims: jwt.StandardClaims{
@@ -54,7 +49,7 @@ func (s *Service) createToken(id uuid.UUID) (string, error) {
 	return token.SignedString(s.signKey)
 }
 
-func (s *Service) extractIdsFromToken(token *jwt.Token) (*models.IDs, error) {
+func (s *Service) extractIdsFromToken(token *jwt.Token) (*models.UserInfo, error) {
 	claims, ok := token.Claims.(*claims)
 	if !ok {
 		return nil, errors.New("invalid claims")
@@ -64,7 +59,7 @@ func (s *Service) extractIdsFromToken(token *jwt.Token) (*models.IDs, error) {
 	if err != nil {
 		return nil, errors.New("invalid uuid")
 	}
-	return &models.IDs{
+	return &models.UserInfo{
 		ID:   id,
 		Role: claims.Role,
 	}, nil

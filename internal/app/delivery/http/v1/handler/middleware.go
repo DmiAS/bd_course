@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/DmiAS/bd_course/internal/app/uwork"
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -22,7 +22,7 @@ func (h *Handler) auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNonAuthoritativeInfo, err.Error())
 		}
-		ids, err := h.af.GetService(uwork.Admin).GetRoleInfo(tokenStr)
+		ids, err := h.af.GetService(models.AdminRole).GetRoleInfo(tokenStr)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNonAuthoritativeInfo, err.Error())
 		}

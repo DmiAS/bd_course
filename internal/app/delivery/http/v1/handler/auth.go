@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
-	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,7 +25,7 @@ func (h *Handler) login(ctx echo.Context) error {
 	if info.Login == "" || info.Password == "" {
 		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
 	}
-	af := h.af.GetService(uwork.Admin)
+	af := h.af.GetService(models.AdminRole)
 	token, err := af.Login(info.Login, info.Password)
 	if err != nil {
 		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
@@ -45,7 +44,7 @@ func (h *Handler) updateAuth(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	auth.UserID = id
-	as := h.af.GetService(uwork.Admin)
+	as := h.af.GetService(models.AdminRole)
 	if err := as.Update(auth); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}

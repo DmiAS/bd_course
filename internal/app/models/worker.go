@@ -1,12 +1,14 @@
 package models
 
+import "github.com/google/uuid"
+
 type WorkerEntity struct {
 	User
 	Grade    string `json:"grade"`
 	Position string `json:"position"`
 }
 type Worker struct {
-	User     User `gorm:"embedded"`
+	ID       uuid.UUID
 	Grade    string
 	Position string
 }

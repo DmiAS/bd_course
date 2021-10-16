@@ -15,6 +15,13 @@ type IWorkerRepository interface {
 	GetAll() models.Workers
 }
 
+type IUserRepository interface {
+	Create(user *models.User) error
+	Update(user *models.User) error
+	Get(id uuid.UUID) (*models.User, error)
+	GetAll() models.Users
+}
+
 type ICampaignRepository interface {
 	GetAll() models.Campaigns
 	GetCampaign(campaignID uuid.UUID) (*models.Campaign, error)
@@ -25,10 +32,8 @@ type ICampaignRepository interface {
 }
 
 type IAuthRepository interface {
-	GetRole(id uuid.UUID) (string, error)
 	GetAuth(login string) (*models.Auth, error)
 	Create(auth *models.Auth) error
-	CreateIdRow(role string) (uuid.UUID, error)
 	Update(auth *models.Auth) error
 	Delete(id uuid.UUID) error
 }
@@ -47,11 +52,4 @@ type IThreadRepository interface {
 	GetAll(projectID uuid.UUID) models.Threads
 	Update(thread *models.Thread) error
 	Delete(threadID uuid.UUID) error
-}
-
-type IClientRepository interface {
-	Create(client *models.Client) error
-	Update(client *models.Client) error
-	Get(id uuid.UUID) (*models.Client, error)
-	GetAll() models.Clients
 }
