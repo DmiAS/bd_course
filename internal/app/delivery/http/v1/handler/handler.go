@@ -50,6 +50,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (h *Handler) initRoutes() {
 	// login handler
 	h.router.POST("/login", h.login)
+
 	api := h.router.Group("/api/v1", h.auth)
 	{
 		admins := api.Group("/admins")
@@ -95,8 +96,8 @@ func (h *Handler) initRoutes() {
 
 		threads := api.Group("/threads")
 		{
-			threads.GET("/", h.getThreads)
-			threads.POST("/", h.createThread)
+			threads.GET("", h.getProjectThreads)
+			threads.POST("", h.createThread)
 			threads.GET("/:id", h.getThread)
 			threads.PUT("/:id", h.updateThread)
 			threads.DELETE("/:id", h.deleteThread)

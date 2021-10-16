@@ -49,7 +49,7 @@ type IProjectService interface {
 }
 
 type IThreadService interface {
-	Create(thread *models.Thread) error
+	Create(projectID uuid.UUID, name string) error
 	Get(threadID uuid.UUID) (*models.Thread, error)
 	GetAll(projectID uuid.UUID) *models.ThreadsList
 	Update(thread *models.Thread) error

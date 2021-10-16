@@ -5,8 +5,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s Service) Create(thread *models.Thread) error {
+func (s Service) Create(projectID uuid.UUID, name string) error {
 	rep := s.unit.GetThreadsRepository()
+	thread := &models.Thread{
+		ID:        uuid.New(),
+		ProjectID: projectID,
+		Name:      name,
+	}
 	return rep.Create(thread)
 }
 

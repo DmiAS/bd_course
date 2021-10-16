@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -9,22 +10,46 @@ import (
 )
 
 type threadInfo struct {
-	Name      string    `json:"name"`
-	ProjectID uuid.UUID `json:"project_id"`
-	ThreadID  uuid.UUID `param:"thread_id"`
+	Name      string
+	ProjectID uuid.UUID
+	ThreadID  uuid.UUID
+}
+
+func (p *threadInfo) bind(ctx echo.Context) error {
+	p.Name = ctx.QueryParam("name")
+	tid := ctx.Param("id")
+	if tid != "" {
+		var err error
+		p.ThreadID, err = uuid.Parse(tid)
+		if err != nil {
+			return err
+		}
+	}
+
+	pid := ctx.QueryParam("project_id")
+	if pid != "" {
+		var err error
+		p.ProjectID, err = uuid.Parse(pid)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (h *Handler) createThread(ctx echo.Context) error {
 	data := &threadInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
 
-	ts := h.tf.GetService(models.AdminRole)
-	if err := ts.Create(&models.Thread{
-		ProjectID: data.ProjectID,
-		Name:      data.Name,
-	}); err != nil {
+	ts := h.tf.GetService(info.Role)
+	if err := ts.Create(data.ProjectID, data.Name); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
@@ -33,10 +58,16 @@ func (h *Handler) createThread(ctx echo.Context) error {
 
 func (h *Handler) getThread(ctx echo.Context) error {
 	data := &threadInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ts := h.tf.GetService(models.AdminRole)
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	ts := h.tf.GetService(info.Role)
 	thread, err := ts.Get(data.ThreadID)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
@@ -44,23 +75,34 @@ func (h *Handler) getThread(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, thread)
 }
 
-func (h *Handler) getThreads(ctx echo.Context) error {
+func (h *Handler) getProjectThreads(ctx echo.Context) error {
 	data := &threadInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	ts := h.tf.GetService(models.AdminRole)
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	ts := h.tf.GetService(info.Role)
 	threads := ts.GetAll(data.ProjectID)
 	return ctx.JSON(http.StatusOK, threads)
 }
 
 func (h *Handler) updateThread(ctx echo.Context) error {
 	data := &threadInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
 
-	ts := h.tf.GetService(models.AdminRole)
+	ts := h.tf.GetService(info.Role)
 	if err := ts.Update(&models.Thread{
 		ID:        data.ThreadID,
 		ProjectID: data.ProjectID,
@@ -74,11 +116,16 @@ func (h *Handler) updateThread(ctx echo.Context) error {
 
 func (h *Handler) deleteThread(ctx echo.Context) error {
 	data := &threadInfo{}
-	if err := ctx.Bind(data); err != nil {
+	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
 
-	ts := h.tf.GetService(models.AdminRole)
+	ts := h.tf.GetService(info.Role)
 	if err := ts.Delete(data.ThreadID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

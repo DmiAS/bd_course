@@ -33,7 +33,7 @@ func (t ThreadRepository) Update(thread *models.Thread) error {
 }
 
 func (t ThreadRepository) Delete(threadID uuid.UUID) error {
-	return t.db.Where("id = ?", threadID).Delete(&models.Projects{}).Error
+	return t.db.Where("id = ?", threadID).Delete(&models.Thread{}).Error
 }
 
 func NewThreadRepository(db *gorm.DB) *ThreadRepository {
