@@ -14,7 +14,7 @@ import (
 
 const algHeader = "alg"
 
-func comparePassword(password string, auth *models.Auth) error {
+func comparePassword(password string, auth models.Auth) error {
 	bp := []byte(password)
 	bs, err := base64.URLEncoding.DecodeString(auth.Salt)
 	if err != nil {
@@ -37,7 +37,7 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func (s *Service) createToken(id uuid.UUID, role models.Role) (string, error) {
+func (s *Service) createToken(id uuid.UUID, role models.Role) (*models.RoleToken, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims{
 		Role: role,
 		StandardClaims: jwt.StandardClaims{
@@ -46,7 +46,14 @@ func (s *Service) createToken(id uuid.UUID, role models.Role) (string, error) {
 			IssuedAt:  jwt.At(time.Now()),
 		},
 	})
-	return token.SignedString(s.signKey)
+	jtoken, err := token.SignedString(s.signKey)
+	if err != nil {
+		return nil, err
+	}
+	return &models.RoleToken{
+		Token: jtoken,
+		Role:  role,
+	}, nil
 }
 
 func (s *Service) extractIdsFromToken(token *jwt.Token) (*models.UserInfo, error) {

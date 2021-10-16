@@ -28,8 +28,8 @@ func (u UserRepository) Get(id uuid.UUID) (*models.User, error) {
 	return user, res.Error
 }
 
-func (u UserRepository) GetAll() models.Users {
+func (u UserRepository) GetAll(role models.Role) models.Users {
 	var users models.Users
-	u.db.Find(&users)
+	u.db.Where("role = ?", role).Find(&users)
 	return users
 }

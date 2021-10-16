@@ -8,12 +8,12 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 )
 
-func (s *Service) Create(user *models.User, role models.Role) (*models.Auth, error) {
+func (s *Service) Create(user *models.User) (*models.Auth, error) {
 	var authInfo *models.Auth
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
 		aServ := auth.NewService(u)
 		var err error
-		authInfo, err = aServ.Create(user.FirstName, user.LastName, role)
+		authInfo, err = aServ.Create(user.FirstName, user.LastName)
 		if err != nil {
 			return err
 		}
@@ -40,9 +40,9 @@ func (s *Service) Get(id uuid.UUID) (*models.User, error) {
 	return cRep.Get(id)
 }
 
-func (s *Service) GetAll() *models.UserList {
+func (s *Service) GetAll(role models.Role) *models.UserList {
 	cRep := s.unit.GetUserRepository()
-	users := cRep.GetAll()
+	users := cRep.GetAll(role)
 	return &models.UserList{
 		Amount: len(users),
 		Users:  users,

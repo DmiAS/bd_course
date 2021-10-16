@@ -16,7 +16,7 @@ func (s *Service) Create(worker *models.WorkerEntity) (*models.Auth, error) {
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
 		us := user.NewService(u)
 		var err error
-		authInfo, err = us.Create(createUser(worker), models.WorkerRole)
+		authInfo, err = us.Create(createUser(worker))
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func (s *Service) GetAll() *models.WorkersList {
 	workers := wRep.GetAll()
 
 	uRep := s.unit.GetUserRepository()
-	users := uRep.GetAll()
+	users := uRep.GetAll(models.WorkerRole)
 	length := len(workers)
 	if len(users) < length {
 		length = len(users)
@@ -105,5 +105,6 @@ func createUser(worker *models.WorkerEntity) *models.User {
 		LastName:  worker.LastName,
 		VkLink:    worker.VkLink,
 		TgLink:    worker.TgLink,
+		Role:      models.WorkerRole,
 	}
 }

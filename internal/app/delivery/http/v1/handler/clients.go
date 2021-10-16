@@ -15,13 +15,13 @@ func (h *Handler) createClient(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
 
-	client := &models.User{}
+	client := &models.User{Role: models.ClientRole}
 	if err := ctx.Bind(client); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	us := h.uf.GetService(info.Role)
-	auth, err := us.Create(client, models.ClientRole)
+	auth, err := us.Create(client)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -72,7 +72,7 @@ func (h *Handler) getClients(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, "you can't watch other clients")
 	}
 	us := h.uf.GetService(info.Role)
-	admins := us.GetAll()
+	admins := us.GetAll(models.ClientRole)
 	return ctx.JSON(http.StatusOK, admins)
 }
 

@@ -19,7 +19,7 @@ type IUserRepository interface {
 	Create(user *models.User) error
 	Update(user *models.User) error
 	Get(id uuid.UUID) (*models.User, error)
-	GetAll() models.Users
+	GetAll(role models.Role) models.Users
 }
 
 type ICampaignRepository interface {
@@ -33,6 +33,7 @@ type ICampaignRepository interface {
 
 type IAuthRepository interface {
 	GetAuth(login string) (*models.Auth, error)
+	GetAuthWithRole(login string) (*models.AuthWithRole, error)
 	Create(auth *models.Auth) error
 	Update(auth *models.Auth) error
 	Delete(id uuid.UUID) error

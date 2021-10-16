@@ -7,17 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Auth struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-type tokenResponse struct {
-	Token string `json:"token"`
-}
-
 func (h *Handler) login(ctx echo.Context) error {
-	info := &Auth{}
+	info := &models.LogPass{}
 	if err := ctx.Bind(info); err != nil {
 		return err
 	}
@@ -26,11 +17,11 @@ func (h *Handler) login(ctx echo.Context) error {
 		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
 	}
 	af := h.af.GetService(models.AdminRole)
-	token, err := af.Login(info.Login, info.Password)
+	tokenResp, err := af.Login(info.Login, info.Password)
 	if err != nil {
 		return ctx.String(http.StatusNonAuthoritativeInfo, "invalid auth data")
 	}
-	return ctx.JSON(http.StatusOK, tokenResponse{token})
+	return ctx.JSON(http.StatusOK, tokenResp)
 }
 
 func (h *Handler) updateAuth(ctx echo.Context) error {

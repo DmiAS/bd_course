@@ -9,9 +9,9 @@ import (
 )
 
 type IAuthService interface {
-	Login(login, password string) (string, error)
+	Login(login, password string) (*models.RoleToken, error)
 	GetRoleInfo(tokenStr string) (*models.UserInfo, error)
-	Create(firstName, lastName string, role models.Role) (*models.Auth, error)
+	Create(firstName, lastName string) (*models.Auth, error)
 	Delete(id uuid.UUID) error
 	Update(auth *models.Auth) error
 }
@@ -24,10 +24,10 @@ type IWorkerService interface {
 }
 
 type IUserService interface {
-	Create(user *models.User, role models.Role) (*models.Auth, error)
+	Create(user *models.User) (*models.Auth, error)
 	Update(user *models.User) error
 	Get(id uuid.UUID) (*models.User, error)
-	GetAll() *models.UserList
+	GetAll(role models.Role) *models.UserList
 }
 
 type ICampaignService interface {

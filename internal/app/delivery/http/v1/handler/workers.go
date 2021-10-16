@@ -19,7 +19,10 @@ func (h *Handler) createWorker(ctx echo.Context) error {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusOK, &models.LogPass{
+		Login:    resp.Login,
+		Password: resp.Password,
+	})
 }
 
 func (h *Handler) updateWorker(ctx echo.Context) error {

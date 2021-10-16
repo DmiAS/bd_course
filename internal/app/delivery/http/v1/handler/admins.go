@@ -14,13 +14,13 @@ func (h *Handler) createAdmin(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-	admin := &models.User{}
+	admin := &models.User{Role: models.AdminRole}
 	if err := ctx.Bind(admin); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	us := h.uf.GetService(info.Role)
-	auth, err := us.Create(admin, models.AdminRole)
+	auth, err := us.Create(admin)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -68,7 +68,7 @@ func (h *Handler) getAdmins(ctx echo.Context) error {
 	}
 
 	us := h.uf.GetService(info.Role)
-	admins := us.GetAll()
+	admins := us.GetAll(models.AdminRole)
 	return ctx.JSON(http.StatusOK, admins)
 }
 

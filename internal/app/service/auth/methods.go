@@ -14,17 +14,17 @@ import (
 const passwordSize = 12
 const saltSize = 16
 
-func (s *Service) Login(login, password string) (string, error) {
+func (s *Service) Login(login, password string) (*models.RoleToken, error) {
 	rep := s.unit.GetAuthRepository()
-	auth, err := rep.GetAuth(login)
+	auth, err := rep.GetAuthWithRole(login)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	if err := comparePassword(password, auth); err != nil {
-		return "", err
+	if err := comparePassword(password, auth.Auth); err != nil {
+		return nil, err
 	}
 
-	return s.createToken(auth.UserID, auth.Role)
+	return s.createToken(auth.Auth.UserID, auth.Role)
 }
 
 func (s *Service) GetRoleInfo(tokenStr string) (*models.UserInfo, error) {
@@ -44,12 +44,11 @@ func (s *Service) GetRoleInfo(tokenStr string) (*models.UserInfo, error) {
 	return s.extractIdsFromToken(token)
 }
 
-func (s *Service) Create(firstName, lastName string, role models.Role) (*models.Auth, error) {
+func (s *Service) Create(firstName, lastName string) (*models.Auth, error) {
 	info := &models.Auth{
 		Login:    gen.Login(firstName, lastName),
 		Password: gen.GenReadableString(passwordSize),
 		UserID:   uuid.New(),
-		Role:     role,
 	}
 
 	if err := s.unit.WithTransaction(func(u uwork.UnitOfWork) error {
@@ -98,7 +97,6 @@ func encryptInfo(info *models.Auth) (*models.Auth, error) {
 		Password: bytesToString(encP),
 		Salt:     bytesToString(salt),
 		UserID:   info.UserID,
-		Role:     info.Role,
 	}
 	return auth, nil
 }
