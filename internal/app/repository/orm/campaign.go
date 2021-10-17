@@ -39,9 +39,12 @@ func NewCampaignRepository(db *gorm.DB) *CampaignRepository {
 	return &CampaignRepository{db: db}
 }
 
-func (c CampaignRepository) GetAll() models.Campaigns {
+func (c CampaignRepository) GetAll(limit int, created int64) models.Campaigns {
 	var camps models.Campaigns
-	c.db.Find(&camps)
+	c.db.
+		Limit(limit).
+		Order("created desc").
+		Where("created < ?", created).Find(&camps)
 	return camps
 }
 

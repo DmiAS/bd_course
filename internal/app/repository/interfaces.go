@@ -23,7 +23,7 @@ type IUserRepository interface {
 }
 
 type ICampaignRepository interface {
-	GetAll() models.Campaigns
+	GetAll(limit int, created int64) models.Campaigns
 	GetCampaign(campaignID uuid.UUID) (*models.Campaign, error)
 	GetCampaigns(workerID uuid.UUID) models.Campaigns
 	GetThreadCampaigns(threadID uuid.UUID) models.Campaigns

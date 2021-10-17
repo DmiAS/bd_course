@@ -25,17 +25,12 @@ type Campaign struct {
 	ClientID     int       `json:"client_id"`
 	VkCampID     int       `json:"vk_camp_id"`
 	Name         string    `json:"name"`
+	Created      int64     `json:"-" gorm:"autoCreateTime:nano"`
 }
 type Campaigns []Campaign
 
 type CampaignsList struct {
+	Cursor    int64 `json:"cursor"`
 	Campaigns Campaigns
 	Amount    int `json:"amount"`
-}
-
-func NewCampaignsList(camps Campaigns) *CampaignsList {
-	return &CampaignsList{
-		Campaigns: camps,
-		Amount:    len(camps),
-	}
 }

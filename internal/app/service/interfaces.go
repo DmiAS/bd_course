@@ -31,7 +31,7 @@ type IUserService interface {
 }
 
 type ICampaignService interface {
-	GetAll() *models.CampaignsList
+	GetAll(cursor int64, limit int) (*models.CampaignsList, error)
 	//methods to work with campaigns
 	Get(id uuid.UUID) (*models.Campaign, error)
 	GetCampaigns(targetologID uuid.UUID) *models.CampaignsList
