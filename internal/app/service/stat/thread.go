@@ -32,7 +32,7 @@ func (s Service) getThreadSimpleStat(thread models.Thread, from, to time.Time) m
 
 func (s Service) getThreadCampaigns(threadID uuid.UUID) models.Campaigns {
 	rep := s.unit.GetCampaignsRepository()
-	return rep.GetThreadCampaigns(threadID)
+	return rep.GetThreadCampaigns(threadID, 0, 0)
 }
 
 func (s Service) getCampsStat(camps models.Campaigns, from, to time.Time) []models.CampSimpleStat {

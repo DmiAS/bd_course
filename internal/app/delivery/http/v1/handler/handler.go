@@ -101,6 +101,7 @@ func (h *Handler) initRoutes() {
 			threads.GET("/:id", h.getThread)
 			threads.PUT("/:id", h.updateThread)
 			threads.DELETE("/:id", h.deleteThread)
+			threads.GET("/:id/camps", h.getThreadCampaigns)
 		}
 
 		camps := api.Group("/campaigns")

@@ -38,14 +38,14 @@ func (p *threadInfo) bind(ctx echo.Context) error {
 }
 
 func (h *Handler) createThread(ctx echo.Context) error {
-	data := &threadInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &threadInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(info.Role)
@@ -57,14 +57,14 @@ func (h *Handler) createThread(ctx echo.Context) error {
 }
 
 func (h *Handler) getThread(ctx echo.Context) error {
-	data := &threadInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &threadInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(info.Role)
@@ -75,15 +75,35 @@ func (h *Handler) getThread(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, thread)
 }
 
-func (h *Handler) getProjectThreads(ctx echo.Context) error {
-	data := &threadInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
+func (h *Handler) getThreadCampaigns(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+	threadID, err := extractID(ctx)
+	if err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	cs := h.cmpf.GetService(info.Role)
+	camps := cs.GetThreadCampaigns(threadID, pag)
+	return ctx.JSON(http.StatusOK, camps)
+}
+
+func (h *Handler) getProjectThreads(ctx echo.Context) error {
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &threadInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	pag := &models.Pagination{}
@@ -96,14 +116,15 @@ func (h *Handler) getProjectThreads(ctx echo.Context) error {
 }
 
 func (h *Handler) updateThread(ctx echo.Context) error {
-	data := &threadInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	data := &threadInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(info.Role)
@@ -119,14 +140,14 @@ func (h *Handler) updateThread(ctx echo.Context) error {
 }
 
 func (h *Handler) deleteThread(ctx echo.Context) error {
-	data := &threadInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &threadInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ts := h.tf.GetService(info.Role)

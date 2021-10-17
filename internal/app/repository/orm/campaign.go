@@ -29,9 +29,13 @@ func (c CampaignRepository) GetCampaignStat(campID uuid.UUID, from, to time.Time
 	return stats
 }
 
-func (c CampaignRepository) GetThreadCampaigns(threadID uuid.UUID) models.Campaigns {
+func (c CampaignRepository) GetThreadCampaigns(threadID uuid.UUID, limit int, created int64) models.Campaigns {
 	var camps models.Campaigns
-	c.db.Model(&models.Campaign{}).Where("campaign_id = ?", threadID).Find(&camps)
+	c.db.
+		Limit(limit).
+		Order("created desc").
+		Where("created < ? and thread_id = ?", created, threadID).
+		Find(&camps)
 	return camps
 }
 
@@ -44,7 +48,8 @@ func (c CampaignRepository) GetAll(limit int, created int64) models.Campaigns {
 	c.db.
 		Limit(limit).
 		Order("created desc").
-		Where("created < ?", created).Find(&camps)
+		Where("created < ?", created).
+		Find(&camps)
 	return camps
 }
 

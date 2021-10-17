@@ -17,6 +17,13 @@ func (s Service) GetAll(pagination *models.Pagination) (*models.CampaignsList, e
 	return createCampaignsList(camps), nil
 }
 
+func (s Service) GetThreadCampaigns(threadID uuid.UUID, pagination *models.Pagination) *models.CampaignsList {
+	rep := s.unit.GetCampaignsRepository()
+	pag := models.GetPaginationInfo(pagination)
+	camps := rep.GetThreadCampaigns(threadID, pag.Limit, pag.Cursor)
+	return createCampaignsList(camps)
+}
+
 func (s *Service) GetCampaigns(workerID uuid.UUID, pagination *models.Pagination) *models.CampaignsList {
 	rep := s.unit.GetCampaignsRepository()
 	pag := models.GetPaginationInfo(pagination)
