@@ -18,13 +18,13 @@ type CampaignStat struct {
 }
 
 type Campaign struct {
-	ID           uuid.UUID
-	ThreadID     uuid.UUID
-	TargetologID uuid.UUID
-	CabinetID    int
-	ClientID     int
-	VkCampID     int
-	Name         string
+	ID           uuid.UUID `json:"id"`
+	ThreadID     uuid.UUID `json:"thread_id"`
+	TargetologID uuid.UUID `json:"targetolog_id"`
+	CabinetID    int       `json:"cabinet_id"`
+	ClientID     int       `json:"client_id"`
+	VkCampID     int       `json:"vk_camp_id"`
+	Name         string    `json:"name"`
 }
 type Campaigns []Campaign
 

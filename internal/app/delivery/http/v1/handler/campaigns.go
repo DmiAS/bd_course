@@ -44,23 +44,6 @@ func (c *campInfo) bind(ctx echo.Context) error {
 	return nil
 }
 
-// получение кампаний таргетолога
-func (h *Handler) getTargetologCampaigns(ctx echo.Context) error {
-	data := &campInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
-	info, err := extractUserInfo(ctx)
-	if err != nil {
-		log.Println(err)
-		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
-	}
-
-	ws := h.cmpf.GetService(info.Role)
-	camps := ws.GetCampaigns(data.TargetologID)
-	return ctx.JSON(http.StatusOK, camps)
-}
-
 // получение всех возможных кампаний
 func (h *Handler) getCampaigns(ctx echo.Context) error {
 	info, err := extractUserInfo(ctx)
