@@ -74,8 +74,13 @@ func (h *Handler) getAdmins(ctx echo.Context) error {
 	//	return ctx.String(http.StatusBadRequest, "permission denied")
 	//}
 
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	us := h.uf.GetService(info.Role)
-	admins := us.GetAll(models.AdminRole)
+	admins := us.GetAll(models.AdminRole, pag)
 	return ctx.JSON(http.StatusOK, admins)
 }
 

@@ -6,5 +6,6 @@ create table if not exists users
     vk_link text,
     tg_link text,
     role varchar(16) CHECK ( role in ('admin', 'worker', 'client')),
+    created bigint not null,
     foreign key (id) references auths(user_id) on delete cascade
 )

@@ -78,7 +78,7 @@ func (s *Service) GetAll() *models.WorkersList {
 	workers := wRep.GetAll()
 
 	uRep := s.unit.GetUserRepository()
-	users := uRep.GetAll(models.WorkerRole)
+	users := uRep.GetAll(models.WorkerRole, 0, 0)
 	length := len(workers)
 	if len(users) < length {
 		length = len(users)

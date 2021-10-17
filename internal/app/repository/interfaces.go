@@ -19,7 +19,7 @@ type IUserRepository interface {
 	Create(user *models.User) error
 	Update(user *models.User) error
 	Get(id uuid.UUID) (*models.User, error)
-	GetAll(role models.Role) models.Users
+	GetAll(role models.Role, created int64, limit int) models.Users
 }
 
 type ICampaignRepository interface {

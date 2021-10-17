@@ -28,8 +28,11 @@ func (u UserRepository) Get(id uuid.UUID) (*models.User, error) {
 	return user, res.Error
 }
 
-func (u UserRepository) GetAll(role models.Role) models.Users {
+func (u UserRepository) GetAll(role models.Role, created int64, limit int) models.Users {
 	var users models.Users
-	u.db.Where("role = ?", role).Find(&users)
+	u.db.Limit(limit).
+		Order("created desc").
+		Where("role = ? and created < ?", role, created).
+		Find(&users)
 	return users
 }

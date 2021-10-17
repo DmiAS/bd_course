@@ -52,12 +52,14 @@ type User struct {
 	VkLink    string    `json:"vk_link"`
 	TgLink    string    `json:"tg_link"`
 	Role      Role      `json:"-"`
+	Created   int64     `json:"-" gorm:"autoCreateTime:nano"`
 }
 type Users []User
 
 type UserList struct {
-	Amount int
-	Users  Users
+	Cursor int64 `json:"cursor"`
+	Amount int   `json:"amount"`
+	Users  Users `json:"users"`
 }
 
 type UserInfo struct {

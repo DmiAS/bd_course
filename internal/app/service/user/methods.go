@@ -40,11 +40,21 @@ func (s *Service) Get(id uuid.UUID) (*models.User, error) {
 	return cRep.Get(id)
 }
 
-func (s *Service) GetAll(role models.Role) *models.UserList {
+func (s *Service) GetAll(role models.Role, pagination *models.Pagination) *models.UserList {
 	cRep := s.unit.GetUserRepository()
-	users := cRep.GetAll(role)
+	pag := models.GetPaginationInfo(pagination)
+	users := cRep.GetAll(role, pag.Cursor, pag.Limit)
+	return createUserList(users)
+}
+
+func createUserList(users models.Users) *models.UserList {
+	var cursor int64
+	if len(users)-1 >= 0 {
+		cursor = users[len(users)-1].Created
+	}
 	return &models.UserList{
-		Amount: len(users),
+		Cursor: cursor,
 		Users:  users,
+		Amount: len(users),
 	}
 }

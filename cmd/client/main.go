@@ -1,12 +1,12 @@
 package main
 
 import (
-	"encoding/base64"
+	"fmt"
 	"log"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
-	"github.com/DmiAS/bd_course/internal/pkg/gen"
-	"github.com/google/uuid"
+	"github.com/DmiAS/bd_course/internal/app/service/user"
+	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,22 +17,19 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	id := uuid.New()
-	ids := models.IDs{ID: id, Role: "admin"}
-	db.Model(models.IDs{}).Create(ids)
-	salt := []byte("salt")
-	password := []byte("1234")
-	enc, err := gen.PasswordWithSalt(password, salt)
-	if err != nil {
-		log.Fatalln(enc)
-	}
-	pass := base64.URLEncoding.EncodeToString(enc)
-	if err := db.Create(&models.Auth{
-		Login:    "advwolf",
-		Password: pass,
-		Salt:     "salt",
-		UserID:   id,
-	}).Error; err != nil {
+
+	uwork.Conn = db
+	u := uwork.New().WithRole(models.AdminRole)
+	s := user.NewService(u)
+	if data, err := s.Create(&models.User{
+		FirstName: "dima",
+		LastName:  "antsibor",
+		VkLink:    "_",
+		TgLink:    "_",
+		Role:      models.AdminRole,
+	}); err != nil {
 		log.Fatalln(err)
+	} else {
+		fmt.Println(*data)
 	}
 }

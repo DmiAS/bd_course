@@ -67,12 +67,16 @@ func (h *Handler) getClients(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
 	if info.Role == models.ClientRole {
 		return ctx.String(http.StatusBadRequest, "you can't watch other clients")
 	}
+
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 	us := h.uf.GetService(info.Role)
-	admins := us.GetAll(models.ClientRole)
+	admins := us.GetAll(models.ClientRole, pag)
 	return ctx.JSON(http.StatusOK, admins)
 }
 

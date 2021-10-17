@@ -27,7 +27,7 @@ type IUserService interface {
 	Create(user *models.User) (*models.Auth, error)
 	Update(user *models.User) error
 	Get(id uuid.UUID) (*models.User, error)
-	GetAll(role models.Role) *models.UserList
+	GetAll(role models.Role, pag *models.Pagination) *models.UserList
 }
 
 type ICampaignService interface {
