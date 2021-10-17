@@ -106,6 +106,7 @@ func (h *Handler) initRoutes() {
 		camps := api.Group("/campaigns")
 		{
 			camps.GET("", h.getCampaigns)
+			camps.GET("/:id", h.getCampaign)
 			camps.PUT("/:id", h.attachCampaign)
 			camps.POST("/:id", h.assignCampaign)
 		}

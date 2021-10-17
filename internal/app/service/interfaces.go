@@ -33,7 +33,8 @@ type IUserService interface {
 type ICampaignService interface {
 	GetAll() *models.CampaignsList
 	//methods to work with campaigns
-	GetCampaigns(id uuid.UUID) *models.CampaignsList
+	Get(id uuid.UUID) (*models.Campaign, error)
+	GetCampaigns(targetologID uuid.UUID) *models.CampaignsList
 	// прикрепляет или открепляет кампанию к потоку
 	AttachCampaign(threadID, campID uuid.UUID) error
 	// назначает кампанию на таргетолога

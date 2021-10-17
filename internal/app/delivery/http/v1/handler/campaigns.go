@@ -9,9 +9,9 @@ import (
 )
 
 type campInfo struct {
-	ThreadID     uuid.UUID `json:"thread_id"`
-	TargetologID uuid.UUID `param:"targetolog_id"`
-	CampaignID   uuid.UUID `param:"id"`
+	ThreadID     uuid.UUID
+	TargetologID uuid.UUID
+	CampaignID   uuid.UUID
 }
 
 func (c *campInfo) bind(ctx echo.Context) error {
@@ -51,9 +51,30 @@ func (h *Handler) getCampaigns(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	ws := h.cmpf.GetService(info.Role)
 	camps := ws.GetAll()
 	return ctx.JSON(http.StatusOK, camps)
+}
+
+func (h *Handler) getCampaign(ctx echo.Context) error {
+	id, err := extractID(ctx)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+
+	cs := h.cmpf.GetService(info.Role)
+	camp, err := cs.Get(id)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, camp)
 }
 
 // привязка кампании к конкретному потоку
@@ -69,7 +90,7 @@ func (h *Handler) attachCampaign(ctx echo.Context) error {
 	}
 
 	ws := h.cmpf.GetService(info.Role)
-	if err := ws.AttachCampaign(data.TargetologID, data.CampaignID); err != nil {
+	if err := ws.AttachCampaign(data.ThreadID, data.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.NoContent(http.StatusOK)
@@ -87,7 +108,7 @@ func (h *Handler) assignCampaign(ctx echo.Context) error {
 	}
 
 	ws := h.cmpf.GetService(info.Role)
-	if err := ws.AssignCampaign(data.ThreadID, data.CampaignID); err != nil {
+	if err := ws.AssignCampaign(data.TargetologID, data.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.NoContent(http.StatusOK)

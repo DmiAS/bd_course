@@ -5,6 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
+func (s Service) Get(id uuid.UUID) (*models.Campaign, error) {
+	rep := s.unit.GetCampaignsRepository()
+	return rep.GetCampaign(id)
+}
+
 func (s Service) GetAll() *models.CampaignsList {
 	rep := s.unit.GetCampaignsRepository()
 	camps := rep.GetAll()
