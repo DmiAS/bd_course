@@ -22,10 +22,17 @@ func (w WorkerRepository) Update(worker *models.Worker) error {
 	return w.db.Updates(worker).Error
 }
 
-func (w WorkerRepository) Get(id uuid.UUID) (*models.Worker, error) {
-	worker := &models.Worker{}
-	res := w.db.Where("id = ?", id).First(worker)
-	return worker, res.Error
+func (w WorkerRepository) Get(id uuid.UUID) (*models.WorkerEntity, error) {
+	worker := &models.WorkerEntity{}
+	if err := w.db.
+		Model(&models.Worker{}).
+		Select("*").
+		Joins("join users on workers.user_id = users.id and users.id = ?", id).
+		First(worker).
+		Error; err != nil {
+		return nil, err
+	}
+	return worker, nil
 }
 
 func (w WorkerRepository) GetAll() models.Workers {

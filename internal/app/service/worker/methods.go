@@ -22,11 +22,7 @@ func (s *Service) Create(worker *models.WorkerEntity) (*models.Auth, error) {
 		}
 
 		urep := u.GetWorkerRepository()
-		return urep.Create(&models.Worker{
-			ID:       authInfo.UserID,
-			Grade:    worker.Grade,
-			Position: worker.Position,
-		})
+		return urep.Create(createWorker(authInfo.UserID, worker))
 	}); err != nil {
 		return nil, err
 	}
@@ -41,11 +37,7 @@ func (s *Service) Update(worker *models.WorkerEntity) error {
 		}
 
 		wRep := s.unit.GetWorkerRepository()
-		return wRep.Update(&models.Worker{
-			ID:       worker.ID,
-			Grade:    worker.Grade,
-			Position: worker.Position,
-		})
+		return wRep.Update(createWorker(worker.ID, worker))
 	})
 }
 
@@ -61,13 +53,8 @@ func (s *Service) Get(id uuid.UUID) (*models.WorkerEntity, error) {
 		return nil, err
 	}
 
-	uRep := s.unit.GetUserRepository()
-	user, err := uRep.Get(id)
-	if err != nil {
-		return nil, err
-	}
 	return &models.WorkerEntity{
-		User:     *user,
+		User:     worker.User,
 		Grade:    worker.Grade,
 		Position: worker.Position,
 	}, nil
@@ -106,5 +93,13 @@ func createUser(worker *models.WorkerEntity) *models.User {
 		VkLink:    worker.VkLink,
 		TgLink:    worker.TgLink,
 		Role:      models.WorkerRole,
+	}
+}
+
+func createWorker(id uuid.UUID, wk *models.WorkerEntity) *models.Worker {
+	return &models.Worker{
+		UserID:   id,
+		Grade:    wk.Grade,
+		Position: wk.Position,
 	}
 }

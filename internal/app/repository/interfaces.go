@@ -11,7 +11,7 @@ import (
 type IWorkerRepository interface {
 	Create(worker *models.Worker) error
 	Update(worker *models.Worker) error
-	Get(id uuid.UUID) (*models.Worker, error)
+	Get(id uuid.UUID) (*models.WorkerEntity, error)
 	GetAll() models.Workers
 }
 

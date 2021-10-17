@@ -9,7 +9,7 @@ type WorkerEntity struct {
 }
 
 type Worker struct {
-	ID       uuid.UUID
+	UserID   uuid.UUID
 	Grade    string
 	Position string
 }
