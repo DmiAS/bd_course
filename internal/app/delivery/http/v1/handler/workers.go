@@ -96,8 +96,13 @@ func (h *Handler) getTargetologCampaigns(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
 
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	ws := h.cmpf.GetService(info.Role)
-	camps := ws.GetCampaigns(id)
+	camps := ws.GetCampaigns(id, pag)
 	return ctx.JSON(http.StatusOK, camps)
 }
 

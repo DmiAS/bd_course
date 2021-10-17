@@ -48,9 +48,12 @@ func (c CampaignRepository) GetAll(limit int, created int64) models.Campaigns {
 	return camps
 }
 
-func (c CampaignRepository) GetCampaigns(workerID uuid.UUID) models.Campaigns {
+func (c CampaignRepository) GetCampaigns(workerID uuid.UUID, created int64, limit int) models.Campaigns {
 	var camps models.Campaigns
-	c.db.Model(&models.Campaign{}).Where("targetolog_id = ?", workerID).Find(&camps)
+	c.db.
+		Limit(limit).
+		Order("created desc").
+		Where("targetolog_id = ? and created < ?", workerID, created).Find(&camps)
 	return camps
 }
 

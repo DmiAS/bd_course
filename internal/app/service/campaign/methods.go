@@ -1,8 +1,6 @@
 package campaign
 
 import (
-	"time"
-
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
 )
@@ -12,19 +10,17 @@ func (s Service) Get(id uuid.UUID) (*models.Campaign, error) {
 	return rep.GetCampaign(id)
 }
 
-func (s Service) GetAll(cursor int64, limit int) (*models.CampaignsList, error) {
+func (s Service) GetAll(pagination *models.Pagination) (*models.CampaignsList, error) {
 	rep := s.unit.GetCampaignsRepository()
-	created := cursor
-	if cursor == 0 {
-		created = time.Now().UnixNano()
-	}
-	camps := rep.GetAll(limit, created)
+	pag := models.GetPaginationInfo(pagination)
+	camps := rep.GetAll(pag.Limit, pag.Cursor)
 	return createCampaignsList(camps), nil
 }
 
-func (s *Service) GetCampaigns(workerID uuid.UUID) *models.CampaignsList {
+func (s *Service) GetCampaigns(workerID uuid.UUID, pagination *models.Pagination) *models.CampaignsList {
 	rep := s.unit.GetCampaignsRepository()
-	camps := rep.GetCampaigns(workerID)
+	pag := models.GetPaginationInfo(pagination)
+	camps := rep.GetCampaigns(workerID, pag.Cursor, pag.Limit)
 	return createCampaignsList(camps)
 }
 

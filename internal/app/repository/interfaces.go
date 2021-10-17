@@ -25,7 +25,7 @@ type IUserRepository interface {
 type ICampaignRepository interface {
 	GetAll(limit int, created int64) models.Campaigns
 	GetCampaign(campaignID uuid.UUID) (*models.Campaign, error)
-	GetCampaigns(workerID uuid.UUID) models.Campaigns
+	GetCampaigns(workerID uuid.UUID, cursor int64, limit int) models.Campaigns
 	GetThreadCampaigns(threadID uuid.UUID) models.Campaigns
 	GetCampaignStat(campID uuid.UUID, from, to time.Time) []models.CampaignStat
 	Update(camp *models.Campaign) error

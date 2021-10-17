@@ -31,10 +31,10 @@ type IUserService interface {
 }
 
 type ICampaignService interface {
-	GetAll(cursor int64, limit int) (*models.CampaignsList, error)
+	GetAll(pagination *models.Pagination) (*models.CampaignsList, error)
 	//methods to work with campaigns
 	Get(id uuid.UUID) (*models.Campaign, error)
-	GetCampaigns(targetologID uuid.UUID) *models.CampaignsList
+	GetCampaigns(targetologID uuid.UUID, pagination *models.Pagination) *models.CampaignsList
 	// прикрепляет или открепляет кампанию к потоку
 	AttachCampaign(threadID, campID uuid.UUID) error
 	// назначает кампанию на таргетолога

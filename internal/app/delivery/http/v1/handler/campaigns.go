@@ -3,8 +3,8 @@ package handler
 import (
 	"log"
 	"net/http"
-	"strconv"
 
+	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -13,11 +13,7 @@ type campInfo struct {
 	ThreadID     uuid.UUID
 	TargetologID uuid.UUID
 	CampaignID   uuid.UUID
-	Limit        int
-	Cursor       int64
 }
-
-const defaultLimit = 5
 
 func (c *campInfo) bind(ctx echo.Context) error {
 	threadID := ctx.QueryParam("thread_id")
@@ -46,24 +42,6 @@ func (c *campInfo) bind(ctx echo.Context) error {
 			return err
 		}
 	}
-
-	if limit := ctx.QueryParam("limit"); limit != "" {
-		var err error
-		c.Limit, err = strconv.Atoi(limit)
-		if err != nil {
-			return err
-		}
-	} else {
-		c.Limit = defaultLimit
-	}
-
-	if cursor := ctx.QueryParam("cursor"); cursor != "" {
-		var err error
-		c.Cursor, err = strconv.ParseInt(cursor, 10, 64)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
@@ -74,13 +52,13 @@ func (h *Handler) getCampaigns(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
-	data := &campInfo{}
-	if err := data.bind(ctx); err != nil {
-		return err
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+
 	ws := h.cmpf.GetService(info.Role)
-	camps, err := ws.GetAll(data.Cursor, data.Limit)
+	camps, err := ws.GetAll(pag)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
