@@ -86,8 +86,12 @@ func (h *Handler) getProjectThreads(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
 
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 	ts := h.tf.GetService(info.Role)
-	threads := ts.GetAll(data.ProjectID)
+	threads := ts.GetAll(data.ProjectID, pag)
 	return ctx.JSON(http.StatusOK, threads)
 }
 

@@ -44,7 +44,7 @@ type ICampaignService interface {
 type IProjectService interface {
 	Create(clientID uuid.UUID, name string) error
 	Get(projectID uuid.UUID) (*models.Project, error)
-	GetAll(clientID uuid.UUID) *models.ProjectsList
+	GetAll(clientID uuid.UUID, pag *models.Pagination) *models.ProjectsList
 	Update(project *models.Project) error
 	Delete(projectID uuid.UUID) error
 }
@@ -52,7 +52,7 @@ type IProjectService interface {
 type IThreadService interface {
 	Create(projectID uuid.UUID, name string) error
 	Get(threadID uuid.UUID) (*models.Thread, error)
-	GetAll(projectID uuid.UUID) *models.ThreadsList
+	GetAll(projectID uuid.UUID, pagination *models.Pagination) *models.ThreadsList
 	Update(thread *models.Thread) error
 	Delete(threadID uuid.UUID) error
 }

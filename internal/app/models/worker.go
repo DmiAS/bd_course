@@ -7,6 +7,7 @@ type WorkerEntity struct {
 	Grade    string `json:"grade"`
 	Position string `json:"position"`
 }
+
 type Worker struct {
 	ID       uuid.UUID
 	Grade    string

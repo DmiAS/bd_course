@@ -42,7 +42,7 @@ type IAuthRepository interface {
 type IProjectRepository interface {
 	Create(project *models.Project) error
 	Get(projectID uuid.UUID) (*models.Project, error)
-	GetAll(clientID uuid.UUID) models.Projects
+	GetAll(clientID uuid.UUID, created int64, limit int) models.Projects
 	Update(project *models.Project) error
 	Delete(projectID uuid.UUID) error
 }
@@ -50,7 +50,7 @@ type IProjectRepository interface {
 type IThreadRepository interface {
 	Create(thread *models.Thread) error
 	Get(threadID uuid.UUID) (*models.Thread, error)
-	GetAll(projectID uuid.UUID) models.Threads
+	GetAll(projectID uuid.UUID, created int64, limit int) models.Threads
 	Update(thread *models.Thread) error
 	Delete(threadID uuid.UUID) error
 }

@@ -4,19 +4,14 @@ import "github.com/google/uuid"
 
 type Project struct {
 	ID       uuid.UUID `json:"id"`
-	ClientID uuid.UUID
-	Name     string `json:"name"`
+	ClientID uuid.UUID `json:"client_id"`
+	Name     string    `json:"name"`
+	Created  int64     `json:"-" gorm:"autoCreateTime:nano"`
 }
 type Projects []Project
 
 type ProjectsList struct {
-	Amount int `json:"amount"`
-	Projects
-}
-
-func NewProjectsList(ps Projects) *ProjectsList {
-	return &ProjectsList{
-		Amount:   len(ps),
-		Projects: ps,
-	}
+	Cursor   int64 `json:"cursor"`
+	Amount   int   `json:"amount"`
+	Projects `json:"projects"`
 }

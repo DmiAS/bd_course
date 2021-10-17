@@ -21,9 +21,13 @@ func (t ThreadRepository) Get(threadID uuid.UUID) (*models.Thread, error) {
 	return thread, res.Error
 }
 
-func (t ThreadRepository) GetAll(projectID uuid.UUID) models.Threads {
+func (t ThreadRepository) GetAll(projectID uuid.UUID, created int64, limit int) models.Threads {
 	var threads models.Threads
-	t.db.Where("project_id = ?", projectID).Find(&threads)
+	t.db.
+		Limit(limit).
+		Order("created desc").
+		Where("project_id = ? and created < ?", projectID, created).
+		Find(&threads)
 	return threads
 }
 

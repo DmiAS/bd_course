@@ -85,8 +85,12 @@ func (h *Handler) getClientProjects(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
 
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 	ps := h.pf.GetService(info.Role)
-	projects := ps.GetAll(data.ClientID)
+	projects := ps.GetAll(data.ClientID, pag)
 	return ctx.JSON(http.StatusOK, projects)
 }
 

@@ -33,8 +33,13 @@ func (p ProjectRepository) Delete(projectID uuid.UUID) error {
 	return p.db.Where("id = ?", projectID).Delete(&models.Projects{}).Error
 }
 
-func (p ProjectRepository) GetAll(clientID uuid.UUID) models.Projects {
+func (p ProjectRepository) GetAll(clientID uuid.UUID, created int64, limit int) models.Projects {
 	var projects models.Projects
-	p.db.Where("client_id = ?", clientID).Find(&projects)
+
+	p.db.
+		Limit(limit).
+		Order("created desc").
+		Where("client_id = ? and created < ?", clientID, created).
+		Find(&projects)
 	return projects
 }

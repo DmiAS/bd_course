@@ -20,10 +20,11 @@ func (s Service) Get(threadID uuid.UUID) (*models.Thread, error) {
 	return rep.Get(threadID)
 }
 
-func (s Service) GetAll(projectID uuid.UUID) *models.ThreadsList {
+func (s Service) GetAll(projectID uuid.UUID, pagination *models.Pagination) *models.ThreadsList {
 	rep := s.unit.GetThreadsRepository()
-	threads := rep.GetAll(projectID)
-	return models.NewThreadsList(threads)
+	pag := models.GetPaginationInfo(pagination)
+	threads := rep.GetAll(projectID, pag.Cursor, pag.Limit)
+	return createThreadList(threads)
 }
 
 func (s Service) Update(thread *models.Thread) error {
@@ -34,4 +35,16 @@ func (s Service) Update(thread *models.Thread) error {
 func (s Service) Delete(threadID uuid.UUID) error {
 	rep := s.unit.GetThreadsRepository()
 	return rep.Delete(threadID)
+}
+
+func createThreadList(threads models.Threads) *models.ThreadsList {
+	var cursor int64
+	if len(threads)-1 >= 0 {
+		cursor = threads[len(threads)-1].Created
+	}
+	return &models.ThreadsList{
+		Cursor:  cursor,
+		Threads: threads,
+		Amount:  len(threads),
+	}
 }

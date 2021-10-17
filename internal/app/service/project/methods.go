@@ -20,10 +20,11 @@ func (s Service) Get(projectID uuid.UUID) (*models.Project, error) {
 	return ps.Get(projectID)
 }
 
-func (s Service) GetAll(clientID uuid.UUID) *models.ProjectsList {
+func (s Service) GetAll(clientID uuid.UUID, pagination *models.Pagination) *models.ProjectsList {
 	ps := s.unit.GetProjectRepository()
-	projects := ps.GetAll(clientID)
-	return models.NewProjectsList(projects)
+	pag := models.GetPaginationInfo(pagination)
+	projects := ps.GetAll(clientID, pag.Cursor, pag.Limit)
+	return createProjectList(projects)
 }
 
 func (s Service) Update(project *models.Project) error {
@@ -34,4 +35,16 @@ func (s Service) Update(project *models.Project) error {
 func (s Service) Delete(projectID uuid.UUID) error {
 	ps := s.unit.GetProjectRepository()
 	return ps.Delete(projectID)
+}
+
+func createProjectList(projects models.Projects) *models.ProjectsList {
+	var cursor int64
+	if len(projects)-1 >= 0 {
+		cursor = projects[len(projects)-1].Created
+	}
+	return &models.ProjectsList{
+		Cursor:   cursor,
+		Projects: projects,
+		Amount:   len(projects),
+	}
 }

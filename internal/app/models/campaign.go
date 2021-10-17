@@ -30,7 +30,7 @@ type Campaign struct {
 type Campaigns []Campaign
 
 type CampaignsList struct {
-	Cursor    int64 `json:"cursor"`
-	Campaigns Campaigns
-	Amount    int `json:"amount"`
+	Cursor    int64     `json:"cursor"`
+	Campaigns Campaigns `json:"campaigns"`
+	Amount    int       `json:"amount"`
 }
