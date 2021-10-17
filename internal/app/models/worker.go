@@ -16,6 +16,7 @@ type Worker struct {
 type Workers []Worker
 
 type WorkersList struct {
+	Cursor  int64          `json:"cursor"`
 	Amount  int            `json:"amount"`
 	Workers []WorkerEntity `json:"workers"`
 }

@@ -12,7 +12,7 @@ type IWorkerRepository interface {
 	Create(worker *models.Worker) error
 	Update(worker *models.Worker) error
 	Get(id uuid.UUID) (*models.WorkerEntity, error)
-	GetAll() models.Workers
+	GetAll(created int64, limit int) []models.WorkerEntity
 }
 
 type IUserRepository interface {

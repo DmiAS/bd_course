@@ -20,7 +20,7 @@ type IWorkerService interface {
 	Create(worker *models.WorkerEntity) (*models.Auth, error)
 	Update(worker *models.WorkerEntity) error
 	Get(id uuid.UUID) (*models.WorkerEntity, error)
-	GetAll() *models.WorkersList
+	GetAll(pagination *models.Pagination) *models.WorkersList
 }
 
 type IUserService interface {

@@ -1,8 +1,6 @@
 package worker
 
 import (
-	"log"
-
 	"github.com/DmiAS/bd_course/internal/app/service/user"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/google/uuid"
@@ -49,40 +47,15 @@ func (s *Service) Delete(id uuid.UUID) error {
 func (s *Service) Get(id uuid.UUID) (*models.WorkerEntity, error) {
 	wRep := s.unit.GetWorkerRepository()
 	worker, err := wRep.Get(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return &models.WorkerEntity{
-		User:     worker.User,
-		Grade:    worker.Grade,
-		Position: worker.Position,
-	}, nil
+	return worker, err
 }
 
-func (s *Service) GetAll() *models.WorkersList {
+func (s *Service) GetAll(pagination *models.Pagination) *models.WorkersList {
 	wRep := s.unit.GetWorkerRepository()
-	workers := wRep.GetAll()
+	pag := models.GetPaginationInfo(pagination)
+	workers := wRep.GetAll(pag.Cursor, pag.Limit)
 
-	uRep := s.unit.GetUserRepository()
-	users := uRep.GetAll(models.WorkerRole, 0, 0)
-	length := len(workers)
-	if len(users) < length {
-		length = len(users)
-		log.Printf("len users (%d) != workers (%d)\n", len(users), len(workers))
-	}
-	wks := make([]models.WorkerEntity, 0, length)
-	for i := range workers {
-		wks = append(wks, models.WorkerEntity{
-			User:     users[i],
-			Grade:    workers[i].Grade,
-			Position: workers[i].Position,
-		})
-	}
-	return &models.WorkersList{
-		Amount:  len(workers),
-		Workers: wks,
-	}
+	return createWorkerList(workers)
 }
 
 func createUser(worker *models.WorkerEntity) *models.User {
@@ -101,5 +74,17 @@ func createWorker(id uuid.UUID, wk *models.WorkerEntity) *models.Worker {
 		UserID:   id,
 		Grade:    wk.Grade,
 		Position: wk.Position,
+	}
+}
+
+func createWorkerList(workers []models.WorkerEntity) *models.WorkersList {
+	var cursor int64
+	if len(workers)-1 >= 0 {
+		cursor = workers[len(workers)-1].Created
+	}
+	return &models.WorkersList{
+		Cursor:  cursor,
+		Amount:  len(workers),
+		Workers: workers,
 	}
 }

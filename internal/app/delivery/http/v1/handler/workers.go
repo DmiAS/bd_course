@@ -61,8 +61,13 @@ func (h *Handler) getWorkers(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	pag := &models.Pagination{}
+	if err := ctx.Bind(pag); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	ws := h.wf.GetService(info.Role)
-	workers := ws.GetAll()
+	workers := ws.GetAll(pag)
 	return ctx.JSON(http.StatusOK, workers)
 }
 

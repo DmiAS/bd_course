@@ -35,8 +35,15 @@ func (w WorkerRepository) Get(id uuid.UUID) (*models.WorkerEntity, error) {
 	return worker, nil
 }
 
-func (w WorkerRepository) GetAll() models.Workers {
-	var workers models.Workers
-	w.db.Find(&workers)
+func (w WorkerRepository) GetAll(created int64, limit int) []models.WorkerEntity {
+	var workers []models.WorkerEntity
+	w.db.
+		Model(&models.Worker{}).
+		Select("*").
+		Joins("join users on workers.user_id = users.id").
+		Limit(limit).
+		Order("created desc").
+		Where("created < ?", created).
+		Find(&workers)
 	return workers
 }
