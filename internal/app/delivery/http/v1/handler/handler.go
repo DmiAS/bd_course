@@ -5,6 +5,7 @@ import (
 
 	"github.com/DmiAS/bd_course/internal/app/service"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Handler struct {
@@ -28,7 +29,7 @@ func NewHandler(
 	cmpf *service.CampaignFactory,
 	sf *service.StatsFactory) *Handler {
 	router := echo.New()
-	//router.Use(middleware.Recover())
+	router.Use(middleware.Recover())
 	handler := &Handler{
 		router: router,
 		wf:     wf,
