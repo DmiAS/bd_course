@@ -64,12 +64,19 @@ func (c CampaignRepository) GetAll(limit int, created int64) models.Campaigns {
 	return camps
 }
 
-func (c CampaignRepository) GetCampaigns(workerID uuid.UUID, created int64, limit int) models.Campaigns {
+func (c CampaignRepository) GetTargetologCampaigns(targetologID uuid.UUID, created int64, limit int) models.Campaigns {
 	var camps models.Campaigns
-	c.db.
-		Limit(limit).
-		Order("created desc").
-		Where("targetolog_id = ? and created < ?", workerID, created).Find(&camps)
+	if created == 0 && limit == 0 {
+		c.db.
+			Where("targetolog_id = ?", targetologID).
+			Find(&camps)
+	} else {
+		c.db.
+			Limit(limit).
+			Order("created desc").
+			Where("targetolog_id = ? and created < ?", targetologID, created).
+			Find(&camps)
+	}
 	return camps
 }
 

@@ -27,7 +27,7 @@ func (s Service) GetThreadCampaigns(threadID uuid.UUID, pagination *models.Pagin
 func (s *Service) GetCampaigns(workerID uuid.UUID, pagination *models.Pagination) *models.CampaignsList {
 	rep := s.unit.GetCampaignsRepository()
 	pag := models.GetPaginationInfo(pagination)
-	camps := rep.GetCampaigns(workerID, pag.Cursor, pag.Limit)
+	camps := rep.GetTargetologCampaigns(workerID, pag.Cursor, pag.Limit)
 	return createCampaignsList(camps)
 }
 

@@ -11,12 +11,12 @@ import (
 )
 
 type statisticRange struct {
-	From       time.Time
-	To         time.Time
-	CampaignID uuid.UUID
-	ThreadID   uuid.UUID
-	TargetID   uuid.UUID
-	ProjectID  uuid.UUID
+	From         time.Time
+	To           time.Time
+	CampaignID   uuid.UUID
+	ThreadID     uuid.UUID
+	TargetologID uuid.UUID
+	ProjectID    uuid.UUID
 }
 
 func (s *statisticRange) bind(ctx echo.Context) error {
@@ -55,7 +55,7 @@ func (s *statisticRange) bind(ctx echo.Context) error {
 
 	if targetID := ctx.Param("target_id"); targetID != "" {
 		var err error
-		s.TargetID, err = uuid.Parse(targetID)
+		s.TargetologID, err = uuid.Parse(targetID)
 		if err != nil {
 			return err
 		}
@@ -132,7 +132,23 @@ func (h *Handler) getCampStat(ctx echo.Context) error {
 }
 
 func (h *Handler) getTargetologStat(ctx echo.Context) error {
-	return nil
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	stat := &statisticRange{}
+	if err := stat.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ss := h.sf.GetService(info.Role)
+	res, err := ss.GetTargetologStat(stat.TargetologID, stat.From, stat.To)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) getTargetologCampaignFullStat(ctx echo.Context) error {

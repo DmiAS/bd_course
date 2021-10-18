@@ -54,7 +54,7 @@ type CampSimpleStat struct {
 }
 
 type TargetologStat struct {
-	Camps []CampSimpleStat `json:"camps"`
+	Camps []CampSimpleStat `json:"campaigns"`
 }
 
 type CampStat struct {
