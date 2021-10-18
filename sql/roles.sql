@@ -9,3 +9,7 @@ password 'Client';
 create role worker
 login
 password 'Worker';
+
+create role dummy
+login
+password 'Dummy';

@@ -20,10 +20,7 @@ func NewServer(handler http.Handler, cfg config.Config) *Server {
 }
 
 func (s *Server) Start() error {
-	if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		return err
-	}
-	return nil
+	return s.srv.ListenAndServe()
 }
 
 func (s *Server) Stop(ctx context.Context) error {

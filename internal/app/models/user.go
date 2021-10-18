@@ -14,6 +14,7 @@ const (
 	AdminRole  Role = "admin"
 	WorkerRole Role = "worker"
 	ClientRole Role = "client"
+	DummyRole  Role = "dummy"
 )
 
 func (r *Role) UnmarshalJSON(data []byte) error {
