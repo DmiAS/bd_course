@@ -6,7 +6,7 @@ import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/DmiAS/bd_course/internal/app/uwork"
 	"github.com/DmiAS/bd_course/internal/pkg/gen"
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )

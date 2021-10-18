@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 const algHeader = "alg"
@@ -34,16 +34,16 @@ func comparePassword(password string, auth models.Auth) error {
 
 type claims struct {
 	Role models.Role `json:"role"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func (s *Service) createToken(id uuid.UUID, role models.Role) (*models.RoleToken, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims{
 		Role: role,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(time.Now().Add(s.expireDuration)),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.expireDuration)),
 			ID:        id.String(),
-			IssuedAt:  jwt.At(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	})
 	jtoken, err := token.SignedString(s.signKey)
