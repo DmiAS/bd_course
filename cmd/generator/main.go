@@ -46,7 +46,7 @@ func generateCampaignStat(db *gorm.DB, campaignID string) {
 	date := time.Now().Add(5 * -time.Hour * 24)
 	const border = 10000
 	id := uuid.MustParse(campaignID)
-	for date.Day() < time.Now().Day() {
+	for date.Day() <= time.Now().Day() {
 		subs, unsubs := generateSubSlices()
 		db.
 			Create(&models.CampaignStat{

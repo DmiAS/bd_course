@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"log"
 	"time"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -23,9 +24,12 @@ func (c CampaignRepository) GetCampaign(campaignID uuid.UUID) (*models.Campaign,
 
 func (c CampaignRepository) GetCampaignStat(campID uuid.UUID, from, to time.Time) []models.CampaignStat {
 	var stats []models.CampaignStat
-	c.db.Model(&models.CampaignStat{}).
-		Where("camp_id = ? and date between from and to", campID, from, to).
-		Find(stats)
+	if err := c.db.
+		Model(&models.CampaignStat{}).
+		Where("camp_id = ? and date between symmetric ? and ?", campID, from, to).
+		Find(&stats).Error; err != nil {
+		log.Printf("[orm][stat] %s\n", err.Error())
+	}
 	return stats
 }
 

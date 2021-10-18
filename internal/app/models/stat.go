@@ -67,12 +67,14 @@ type CampStat struct {
 	Days       []CampaignDayStat `json:"days"`
 }
 
+const TimeTemplate = "02-01-2006"
+
 type CampaignDayStat struct {
-	Day         time.Time `json:"day"`
-	Spent       float64   `json:"spent"`
-	Impressions int       `json:"impressions"`
-	Conversion  int       `json:"conversion"`
-	Subs        int       `json:"subs"`
-	Unsubs      int       `json:"unsubs"`
-	Sales       int       `json:"sales"`
+	Day         string  `json:"day"`
+	Spent       float64 `json:"spent"`
+	Impressions int     `json:"impressions"`
+	Conversion  int     `json:"conversion"`
+	Subs        int     `json:"subs"`
+	Unsubs      int     `json:"unsubs"`
+	Sales       int     `json:"sales"`
 }

@@ -28,8 +28,9 @@ func (s Service) getCampDaysStat(campaignID uuid.UUID, from, to time.Time) []mod
 	stats := rep.GetCampaignStat(campaignID, from, to)
 	days := make([]models.CampaignDayStat, 0, len(stats))
 	for _, stat := range stats {
+		date := stat.Date.Format(models.TimeTemplate)
 		days = append(days, models.CampaignDayStat{
-			Day:         stat.Date,
+			Day:         date,
 			Spent:       stat.Spent,
 			Impressions: stat.Impressions,
 			Conversion:  stat.Conversion,
