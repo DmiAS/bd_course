@@ -4,16 +4,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
+// go representation of campaign_stats table
 type CampaignStat struct {
 	CampID      uuid.UUID
 	Date        time.Time
 	Spent       float64
 	Impressions int
 	Conversion  int
-	Subs        []int
-	Unsubs      []int
+	Subs        pq.Int64Array `gorm:"type:biginteger[]"`
+	Unsubs      pq.Int64Array `gorm:"type:biginteger[]"`
 	Sales       int
 }
 
