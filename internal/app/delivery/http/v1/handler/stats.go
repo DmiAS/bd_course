@@ -150,7 +150,3 @@ func (h *Handler) getTargetologStat(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, res)
 }
-
-func (h *Handler) getTargetologCampaignFullStat(ctx echo.Context) error {
-	return nil
-}
