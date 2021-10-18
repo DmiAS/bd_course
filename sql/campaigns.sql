@@ -9,6 +9,6 @@ create table if not exists campaigns
     name          varchar(256) not null,
     created       bigint not null,
     unique (thread_id, name),
-    foreign key (thread_id) references threads (id),
-    foreign key (targetolog_id) references workers (id)
+    foreign key (thread_id) references threads (id) on delete cascade,
+    foreign key (targetolog_id) references workers (user_id) on delete cascade
 )
