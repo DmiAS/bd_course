@@ -23,8 +23,8 @@ type ProjectStat struct {
 type ThreadSimpleStat struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`
-	From        time.Time `json:"from"`
-	To          time.Time `json:"to"`
+	From        string    `json:"from"`
+	To          string    `json:"to"`
 	Spent       float64   `json:"spent"`
 	Impressions int       `json:"impressions"`
 	Conversion  int       `json:"conversion"`
@@ -45,8 +45,8 @@ type CampSimpleStat struct {
 	CabinetID    int       `json:"cabinet_id"`
 	VkClientID   int       `json:"vk_client_id"`
 	Name         string    `json:"name"`
-	From         time.Time `json:"from"`
-	To           time.Time `json:"to"`
+	From         string    `json:"from"`
+	To           string    `json:"to"`
 	Spent        float64   `json:"spent"`
 	Impressions  int       `json:"impressions"`
 	Conversion   int       `json:"conversion"`
@@ -67,7 +67,10 @@ type CampStat struct {
 	Days       []CampaignDayStat `json:"days"`
 }
 
-const TimeTemplate = "02-01-2006"
+const (
+	TimeTemplate = "02-01-2006"
+	Eps          = 1e-6
+)
 
 type CampaignDayStat struct {
 	Day         string  `json:"day"`

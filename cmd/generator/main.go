@@ -15,12 +15,13 @@ import (
 )
 
 func main() {
+	random.Seed(time.Now().Unix())
 	dsn := "host=localhost user=postgres password=password dbname=agency sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{SkipDefaultTransaction: false})
 	if err != nil {
 		log.Fatalln(err)
 	}
-	generateCampaignStat(db, "aea9c20d-1b43-479b-9806-12ea2d697172")
+	generateCampaignStat(db, "33a21281-138f-493f-880e-4dd627b84b43")
 	//generateCampaigns(db)
 }
 

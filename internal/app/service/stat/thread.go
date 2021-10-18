@@ -41,8 +41,11 @@ func (s Service) getCampsStat(camps models.Campaigns, from, to time.Time) []mode
 	for _, camp := range camps {
 		stats := rep.GetCampaignStat(camp.ID, from, to)
 		stat := collectCampaignStat(stats)
-		stat.From = from
-		stat.To = to
+		if stat.Spent < models.Eps {
+			continue
+		}
+		stat.From = from.Format(models.TimeTemplate)
+		stat.To = to.Format(models.TimeTemplate)
 		stat.TargetologID = camp.TargetologID
 		stat.CabinetID = camp.CabinetID
 		stat.VkClientID = camp.ClientID
@@ -56,16 +59,22 @@ func (s Service) getCampsStat(camps models.Campaigns, from, to time.Time) []mode
 func createThreadSimpleStat(campsStat []models.CampSimpleStat, thread models.Thread, from, to time.Time) models.ThreadSimpleStat {
 	stat := collectThreadStat(campsStat)
 	stat.ID = thread.ID
-	stat.From = from
-	stat.To = to
+	stat.From = from.Format(models.TimeTemplate)
+	stat.To = to.Format(models.TimeTemplate)
 	stat.Name = thread.Name
 	return stat
 }
 
 func collectThreadTargetologs(camps models.Campaigns) []uuid.UUID {
-	ids := make([]uuid.UUID, len(camps))
+	m := make(map[uuid.UUID]struct{})
 	for _, camp := range camps {
-		ids = append(ids, camp.TargetologID)
+		if _, ok := m[camp.TargetologID]; !ok {
+			m[camp.TargetologID] = struct{}{}
+		}
+	}
+	ids := make([]uuid.UUID, 0, len(m))
+	for key := range m {
+		ids = append(ids, key)
 	}
 	return ids
 }
@@ -77,7 +86,6 @@ func collectThreadStat(stats []models.CampSimpleStat) models.ThreadSimpleStat {
 		res.Spent += stat.Spent
 		res.Unsubs += stat.Unsubs
 		res.Subs += stat.Subs
-		res.Spent += stat.Spent
 		res.Conversion += stat.Conversion
 		res.Impressions += stat.Impressions
 	}

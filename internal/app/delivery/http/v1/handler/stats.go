@@ -67,7 +67,23 @@ func (h *Handler) getProjectStat(ctx echo.Context) error {
 }
 
 func (h *Handler) getThreadStat(ctx echo.Context) error {
-	return nil
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	stat := &statisticRange{}
+	if err := stat.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ss := h.sf.GetService(info.Role)
+	res, err := ss.GetThreadStat(stat.ThreadID, stat.From, stat.To)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) getCampStat(ctx echo.Context) error {

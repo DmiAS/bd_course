@@ -35,11 +35,18 @@ func (c CampaignRepository) GetCampaignStat(campID uuid.UUID, from, to time.Time
 
 func (c CampaignRepository) GetThreadCampaigns(threadID uuid.UUID, limit int, created int64) models.Campaigns {
 	var camps models.Campaigns
-	c.db.
-		Limit(limit).
-		Order("created desc").
-		Where("created < ? and thread_id = ?", created, threadID).
-		Find(&camps)
+	// this is simple request from thread service for collecting statistic
+	if limit == 0 && created == 0 {
+		c.db.
+			Where("thread_id = ?", threadID).
+			Find(&camps)
+	} else {
+		c.db.
+			Limit(limit).
+			Order("created desc").
+			Where("created < ? and thread_id = ?", created, threadID).
+			Find(&camps)
+	}
 	return camps
 }
 
