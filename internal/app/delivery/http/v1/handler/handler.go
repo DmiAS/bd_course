@@ -114,7 +114,7 @@ func (h *Handler) initRoutes() {
 
 		stats := api.Group("/statistic")
 		{
-			stats.GET("/projects/:id", h.getProjectStat)
+			stats.GET("/projects/:project_id", h.getProjectStat)
 			stats.GET("/threads/:thread_id", h.getThreadStat)
 			stats.GET("/camps/:camp_id", h.getCampStat)
 			stats.GET("/targetologs/:target_id", h.getTargetologStat)

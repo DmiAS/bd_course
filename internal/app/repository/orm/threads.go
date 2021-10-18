@@ -23,11 +23,17 @@ func (t ThreadRepository) Get(threadID uuid.UUID) (*models.Thread, error) {
 
 func (t ThreadRepository) GetAll(projectID uuid.UUID, created int64, limit int) models.Threads {
 	var threads models.Threads
-	t.db.
-		Limit(limit).
-		Order("created desc").
-		Where("project_id = ? and created < ?", projectID, created).
-		Find(&threads)
+	if created == 0 && limit == 0 {
+		t.db.
+			Where("project_id = ?", projectID).
+			Find(&threads)
+	} else {
+		t.db.
+			Limit(limit).
+			Order("created desc").
+			Where("project_id = ? and created < ?", projectID, created).
+			Find(&threads)
+	}
 	return threads
 }
 

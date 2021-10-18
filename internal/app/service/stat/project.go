@@ -16,8 +16,8 @@ func (s Service) GetProjectStat(projectID uuid.UUID, from, to time.Time) (*model
 	threadsStat := s.getThreadsStat(projectID, from, to)
 	projectStat := collectProjectStat(threadsStat)
 	projectStat.ProjectID = projectID
-	projectStat.From = from
-	projectStat.To = to
+	projectStat.From = from.Format(models.TimeTemplate)
+	projectStat.To = to.Format(models.TimeTemplate)
 	projectStat.Threads = threadsStat
 	projectStat.Name = project.Name
 	return &projectStat, nil
@@ -28,7 +28,10 @@ func (s Service) getThreadsStat(projectID uuid.UUID, from, to time.Time) []model
 	threads := rep.GetAll(projectID, 0, 0)
 	var stats []models.ThreadSimpleStat
 	for _, thread := range threads {
-		stats = append(stats, s.getThreadSimpleStat(thread, from, to))
+		threadStat := s.getThreadSimpleStat(thread, from, to)
+		if threadStat.Spent > models.Eps {
+			stats = append(stats, threadStat)
+		}
 	}
 	return stats
 }

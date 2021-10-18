@@ -16,6 +16,7 @@ type statisticRange struct {
 	CampaignID uuid.UUID
 	ThreadID   uuid.UUID
 	TargetID   uuid.UUID
+	ProjectID  uuid.UUID
 }
 
 func (s *statisticRange) bind(ctx echo.Context) error {
@@ -59,11 +60,35 @@ func (s *statisticRange) bind(ctx echo.Context) error {
 			return err
 		}
 	}
+
+	if projectID := ctx.Param("project_id"); projectID != "" {
+		var err error
+		s.ProjectID, err = uuid.Parse(projectID)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 func (h *Handler) getProjectStat(ctx echo.Context) error {
-	return nil
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	stat := &statisticRange{}
+	if err := stat.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
+	ss := h.sf.GetService(info.Role)
+	res, err := ss.GetProjectStat(stat.ProjectID, stat.From, stat.To)
+	if err != nil {
+		return ctx.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, res)
 }
 
 func (h *Handler) getThreadStat(ctx echo.Context) error {

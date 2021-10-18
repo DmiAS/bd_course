@@ -1,16 +1,14 @@
 package models
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
 type ProjectStat struct {
 	ProjectID   uuid.UUID          `json:"project_id"`
 	Name        string             `json:"name"`
-	From        time.Time          `json:"from"`
-	To          time.Time          `json:"to"`
+	From        string             `json:"from"`
+	To          string             `json:"to"`
 	Spent       float64            `json:"spent"`
 	Impressions int                `json:"impressions"`
 	Conversion  int                `json:"conversion"`
