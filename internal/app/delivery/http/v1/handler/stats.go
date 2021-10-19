@@ -135,11 +135,14 @@ func (h *Handler) getTargetologStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	if err := canManageAccountData(info.Role, info.ID, stat.TargetologID, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetTargetologStat(stat.TargetologID, stat.From, stat.To)
 	if err != nil {
