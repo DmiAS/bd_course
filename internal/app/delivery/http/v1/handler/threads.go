@@ -80,6 +80,9 @@ func (h *Handler) getThreadCampaigns(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
