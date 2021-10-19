@@ -35,11 +35,16 @@ func (p ProjectRepository) Delete(projectID uuid.UUID) error {
 
 func (p ProjectRepository) GetAll(clientID uuid.UUID, created int64, limit int) models.Projects {
 	var projects models.Projects
-
-	p.db.
-		Limit(limit).
-		Order("created desc").
-		Where("client_id = ? and created < ?", clientID, created).
-		Find(&projects)
+	if created == 0 && limit == 0 {
+		p.db.
+			Where("client_id = ?", clientID).
+			Find(&projects)
+	} else {
+		p.db.
+			Limit(limit).
+			Order("created desc").
+			Where("client_id = ? and created < ?", clientID, created).
+			Find(&projects)
+	}
 	return projects
 }

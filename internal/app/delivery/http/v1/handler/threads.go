@@ -67,7 +67,7 @@ func (h *Handler) getThread(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ts := h.tf.GetService(info.Role)
-	thread, err := ts.Get(data.ThreadID)
+	thread, err := ts.Get(data.ThreadID, info.ID, info.Role)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
@@ -110,7 +110,10 @@ func (h *Handler) getProjectThreads(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ts := h.tf.GetService(info.Role)
-	threads := ts.GetAll(data.ProjectID, pag)
+	threads, err := ts.GetAll(data.ProjectID, info.ID, info.Role, pag)
+	if err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 	return ctx.JSON(http.StatusOK, threads)
 }
 

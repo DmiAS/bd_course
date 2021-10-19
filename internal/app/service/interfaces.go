@@ -52,8 +52,8 @@ type IProjectService interface {
 
 type IThreadService interface {
 	Create(projectID uuid.UUID, name string) error
-	Get(threadID uuid.UUID) (*models.Thread, error)
-	GetAll(projectID uuid.UUID, pagination *models.Pagination) *models.ThreadsList
+	Get(threadID uuid.UUID, userID uuid.UUID, role models.Role) (*models.Thread, error)
+	GetAll(projectID uuid.UUID, userID uuid.UUID, role models.Role, pagination *models.Pagination) (*models.ThreadsList, error)
 	Update(thread *models.Thread) error
 	Delete(threadID uuid.UUID) error
 }
