@@ -5,13 +5,23 @@ import (
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
-func (s Service) GetThreadStat(threadID uuid.UUID, from, to time.Time) (*models.ThreadStat, error) {
+func (s Service) GetThreadStat(threadID, userID uuid.UUID, role models.Role, from, to time.Time) (*models.ThreadStat, error) {
 	rep := s.unit.GetThreadsRepository()
 	thread, err := rep.Get(threadID)
 	if err != nil {
 		return nil, err
+	}
+	prep := s.unit.GetProjectRepository()
+	project, err := prep.Get(thread.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+	//check access
+	if (role == models.ClientRole && project.ClientID != userID) || role == models.WorkerRole {
+		return nil, errors.New("access denied")
 	}
 	camps := s.getThreadCampaigns(threadID)
 	campsStat := s.getCampsStat(camps, from, to)

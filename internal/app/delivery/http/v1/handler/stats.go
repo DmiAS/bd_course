@@ -102,11 +102,10 @@ func (h *Handler) getThreadStat(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ss := h.sf.GetService(info.Role)
-	res, err := ss.GetThreadStat(stat.ThreadID, stat.From, stat.To)
+	res, err := ss.GetThreadStat(stat.ThreadID, info.ID, info.Role, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
 	return ctx.JSON(http.StatusOK, res)
 }
 
@@ -135,6 +134,7 @@ func (h *Handler) getTargetologStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -142,7 +142,6 @@ func (h *Handler) getTargetologStat(ctx echo.Context) error {
 	if err := canManageAccountData(info.Role, info.ID, stat.TargetologID, models.AdminRole); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetTargetologStat(stat.TargetologID, stat.From, stat.To)
 	if err != nil {
