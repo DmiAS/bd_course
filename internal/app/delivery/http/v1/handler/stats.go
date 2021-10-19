@@ -83,7 +83,7 @@ func (h *Handler) getProjectStat(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ss := h.sf.GetService(info.Role)
-	res, err := ss.GetProjectStat(stat.ProjectID, stat.From, stat.To)
+	res, err := ss.GetProjectStat(stat.ProjectID, info.ID, info.Role, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
