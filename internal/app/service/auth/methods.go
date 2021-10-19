@@ -67,7 +67,17 @@ func (s *Service) Create(firstName, lastName string) (*models.Auth, error) {
 	return info, nil
 }
 
-func (s *Service) Update(info *models.Auth) error {
+func (s *Service) Update(info *models.Auth, userID uuid.UUID, role models.Role) error {
+	rep := s.unit.GetUserRepository()
+	user, err := rep.Get(info.UserID)
+	if err != nil {
+		return errors.New("access denied")
+	}
+	if (user.Role == models.AdminRole && role == models.AdminRole) || (role == models.ClientRole || role == models.WorkerRole) {
+		if userID != user.ID {
+			return errors.New("access denied")
+		}
+	}
 	encInfo, err := encryptInfo(info)
 	if err != nil {
 		return err

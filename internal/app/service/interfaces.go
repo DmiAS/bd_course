@@ -13,7 +13,7 @@ type IAuthService interface {
 	GetRoleInfo(tokenStr string) (*models.UserInfo, error)
 	Create(firstName, lastName string) (*models.Auth, error)
 	Delete(id uuid.UUID) error
-	Update(auth *models.Auth) error
+	Update(info *models.Auth, userID uuid.UUID, role models.Role) error
 }
 
 type IWorkerService interface {

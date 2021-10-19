@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
@@ -25,6 +26,11 @@ func (h *Handler) login(ctx echo.Context) error {
 }
 
 func (h *Handler) updateAuth(ctx echo.Context) error {
+	info, err := extractUserInfo(ctx)
+	if err != nil {
+		log.Println(err)
+		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
 	id, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
@@ -36,9 +42,8 @@ func (h *Handler) updateAuth(ctx echo.Context) error {
 	}
 	auth.UserID = id
 	as := h.af.GetService(models.AdminRole)
-	if err := as.Update(auth); err != nil {
+	if err := as.Update(auth, info.ID, info.Role); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	return ctx.NoContent(http.StatusOK)
 }
