@@ -17,7 +17,7 @@ grant select
     on workers
     to worker;
 
-grant update
+grant select, update
     on users
     to worker;
 
@@ -30,5 +30,5 @@ grant select, update
     to worker;
 
 grant select
-    on auths, campaigns, campaign_stats
+    on auths, projects, campaign_stats
     to worker;

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -62,6 +63,9 @@ func (h *Handler) getClients(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
@@ -78,11 +82,14 @@ func (h *Handler) getClient(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
 	targetID, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
+	if err := canManageAccountData(info.Role, info.ID, targetID, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	us := h.uf.GetService(info.Role)
 	admin, err := us.Get(targetID)
 	if err != nil {
@@ -97,11 +104,11 @@ func (h *Handler) deleteClient(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	targetID, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
-
 	as := h.af.GetService(info.Role)
 	if err := as.Delete(targetID); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

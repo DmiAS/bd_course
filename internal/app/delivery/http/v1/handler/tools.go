@@ -28,10 +28,10 @@ func extractID(ctx echo.Context) (uuid.UUID, error) {
 	return uuid.Parse(sid)
 }
 
-func canManageAccountData(role models.Role, id, targetID uuid.UUID, acceptedRoles ...models.Role) error {
+func canManageAccountData(role models.Role, id, targetID uuid.UUID, grantedRoles ...models.Role) error {
 	roleIsAccepted := false
-	for i := range acceptedRoles {
-		if role == acceptedRoles[i] {
+	for i := range grantedRoles {
+		if role == grantedRoles[i] {
 			roleIsAccepted = true
 			break
 		}
