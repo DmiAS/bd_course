@@ -64,12 +64,9 @@ func (h *Handler) getProject(ctx echo.Context) error {
 	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-	if err := canManageAccountData(info.Role, info.ID, data.ClientID, models.AdminRole, models.WorkerRole); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 
 	ps := h.pf.GetService(info.Role)
-	project, err := ps.Get(data.ProjectID)
+	project, err := ps.Get(data.ProjectID, info.ID, info.Role)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

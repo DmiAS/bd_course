@@ -3,6 +3,7 @@ package project
 import (
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 func (s Service) Create(clientID uuid.UUID, name string) error {
@@ -15,9 +16,19 @@ func (s Service) Create(clientID uuid.UUID, name string) error {
 	return ps.Create(project)
 }
 
-func (s Service) Get(projectID uuid.UUID) (*models.Project, error) {
+func (s Service) Get(projectID, userID uuid.UUID, role models.Role) (*models.Project, error) {
 	ps := s.unit.GetProjectRepository()
-	return ps.Get(projectID)
+	project, err := ps.Get(projectID)
+	if err != nil {
+		return nil, err
+	}
+	// check access
+	if role == models.ClientRole {
+		if project.ClientID != userID {
+			return nil, errors.New("access denied")
+		}
+	}
+	return project, nil
 }
 
 func (s Service) GetAll(clientID uuid.UUID, pagination *models.Pagination) *models.ProjectsList {
