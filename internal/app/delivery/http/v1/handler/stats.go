@@ -122,7 +122,7 @@ func (h *Handler) getCampStat(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 	ss := h.sf.GetService(info.Role)
-	res, err := ss.GetFullCampaignStat(stat.CampaignID, stat.From, stat.To)
+	res, err := ss.GetFullCampaignStat(stat.CampaignID, info.ID, info.Role, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}

@@ -59,7 +59,7 @@ type IThreadService interface {
 }
 
 type IStatService interface {
-	GetFullCampaignStat(campaignID uuid.UUID, from, to time.Time) (*models.CampStat, error)
+	GetFullCampaignStat(campaignID, userID uuid.UUID, role models.Role, from, to time.Time) (*models.CampStat, error)
 	GetProjectStat(projectID uuid.UUID, from, to time.Time) (*models.ProjectStat, error)
 	GetThreadStat(threadID uuid.UUID, from, to time.Time) (*models.ThreadStat, error)
 	GetTargetologStat(targetologID uuid.UUID, from, to time.Time) (*models.TargetologStat, error)

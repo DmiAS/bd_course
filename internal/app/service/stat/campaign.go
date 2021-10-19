@@ -5,13 +5,23 @@ import (
 
 	"github.com/DmiAS/bd_course/internal/app/models"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
-func (s Service) GetFullCampaignStat(campaignID uuid.UUID, from, to time.Time) (*models.CampStat, error) {
+func (s Service) GetFullCampaignStat(campaignID, userID uuid.UUID, role models.Role, from, to time.Time) (*models.CampStat, error) {
 	rep := s.unit.GetCampaignsRepository()
 	camp, err := rep.GetCampaign(campaignID)
 	if err != nil {
 		return nil, err
+	}
+	// check access
+	if role == models.ClientRole {
+		return nil, errors.New("access denied")
+	}
+	if role == models.WorkerRole {
+		if camp.TargetologID != userID {
+			return nil, errors.New("access denied")
+		}
 	}
 	days := s.getCampDaysStat(campaignID, from, to)
 	return &models.CampStat{
