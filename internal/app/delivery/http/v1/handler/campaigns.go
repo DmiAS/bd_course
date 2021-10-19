@@ -52,11 +52,11 @@ func (h *Handler) getCampaigns(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.cmpf.GetService(info.Role)
 	camps, err := ws.GetAll(pag)
 	if err != nil {
@@ -66,14 +66,14 @@ func (h *Handler) getCampaigns(ctx echo.Context) error {
 }
 
 func (h *Handler) getCampaign(ctx echo.Context) error {
-	id, err := extractID(ctx)
-	if err != nil {
-		return ctx.NoContent(http.StatusBadRequest)
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	id, err := extractID(ctx)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	cs := h.cmpf.GetService(info.Role)
@@ -81,20 +81,19 @@ func (h *Handler) getCampaign(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
 	return ctx.JSON(http.StatusOK, camp)
 }
 
 // привязка кампании к конкретному потоку
 func (h *Handler) attachCampaign(ctx echo.Context) error {
-	data := &campInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &campInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ws := h.cmpf.GetService(info.Role)
@@ -105,14 +104,14 @@ func (h *Handler) attachCampaign(ctx echo.Context) error {
 }
 
 func (h *Handler) assignCampaign(ctx echo.Context) error {
-	data := &campInfo{}
-	if err := data.bind(ctx); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
 	info, err := extractUserInfo(ctx)
 	if err != nil {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
+	}
+	data := &campInfo{}
+	if err := data.bind(ctx); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ws := h.cmpf.GetService(info.Role)
