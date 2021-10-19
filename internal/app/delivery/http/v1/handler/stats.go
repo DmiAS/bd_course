@@ -77,17 +77,16 @@ func (h *Handler) getProjectStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetProjectStat(stat.ProjectID, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
 	return ctx.JSON(http.StatusOK, res)
 }
 
@@ -97,11 +96,11 @@ func (h *Handler) getThreadStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetThreadStat(stat.ThreadID, stat.From, stat.To)
 	if err != nil {
@@ -117,17 +116,16 @@ func (h *Handler) getCampStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetFullCampaignStat(stat.CampaignID, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
 	return ctx.JSON(http.StatusOK, res)
 }
 
@@ -137,16 +135,15 @@ func (h *Handler) getTargetologStat(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+
 	stat := &statisticRange{}
 	if err := stat.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ss := h.sf.GetService(info.Role)
 	res, err := ss.GetTargetologStat(stat.TargetologID, stat.From, stat.To)
 	if err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
 	}
-
 	return ctx.JSON(http.StatusOK, res)
 }
