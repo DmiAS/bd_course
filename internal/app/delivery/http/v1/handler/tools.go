@@ -27,3 +27,17 @@ func extractID(ctx echo.Context) (uuid.UUID, error) {
 	sid := ctx.Param("id")
 	return uuid.Parse(sid)
 }
+
+func canManageAccountData(role models.Role, id, targetID uuid.UUID, acceptedRoles ...models.Role) error {
+	roleIsAccepted := false
+	for i := range acceptedRoles {
+		if role == acceptedRoles[i] {
+			roleIsAccepted = true
+			break
+		}
+	}
+	if !roleIsAccepted && id != targetID {
+		return errors.New("access denied")
+	}
+	return nil
+}

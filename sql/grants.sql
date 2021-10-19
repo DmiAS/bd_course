@@ -13,8 +13,12 @@ grant select
     to client;
 
 -- grant privileges for worker
-grant select, update
+grant select
     on workers
+    to worker;
+
+grant update
+    on users
     to worker;
 
 grant select, insert, update

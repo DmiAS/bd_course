@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/DmiAS/bd_course/internal/app/models"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,11 +15,14 @@ func (h *Handler) createWorker(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	worker := &models.WorkerEntity{}
 	if err := ctx.Bind(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.wf.GetService(info.Role)
 	resp, err := ws.Create(worker)
 	if err != nil {
@@ -36,22 +40,23 @@ func (h *Handler) updateWorker(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-	worker := &models.WorkerEntity{}
-	if err := ctx.Bind(worker); err != nil {
-		return ctx.String(http.StatusBadRequest, err.Error())
-	}
-
 	id, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
+	worker := &models.WorkerEntity{}
+	if err := ctx.Bind(worker); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 	ws := h.wf.GetService(info.Role)
 	worker.ID = id
 	if err := ws.Update(worker); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	return ctx.NoContent(http.StatusOK)
 }
 
@@ -61,11 +66,14 @@ func (h *Handler) getWorkers(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.wf.GetService(info.Role)
 	workers := ws.GetAll(pag)
 	return ctx.JSON(http.StatusOK, workers)
@@ -80,6 +88,9 @@ func (h *Handler) getWorker(ctx echo.Context) error {
 	id, err := extractID(ctx)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
+	}
+	if err := canManageAccountData(info.Role, info.ID, id); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
 	ws := h.wf.GetService(info.Role)
@@ -100,12 +111,14 @@ func (h *Handler) getTargetologCampaigns(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
+	if err := canManageAccountData(info.Role, info.ID, id, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.cmpf.GetService(info.Role)
 	camps := ws.GetCampaigns(id, pag)
 	return ctx.JSON(http.StatusOK, camps)
@@ -121,11 +134,13 @@ func (h *Handler) deleteWorker(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
 	as := h.af.GetService(info.Role)
 	if err := as.Delete(id); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	return ctx.NoContent(http.StatusOK)
 }
