@@ -52,6 +52,9 @@ func (h *Handler) getCampaigns(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
 
 	pag := &models.Pagination{}
 	if err := ctx.Bind(pag); err != nil {
@@ -71,11 +74,14 @@ func (h *Handler) getCampaign(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	id, err := extractID(ctx)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
-
 	cs := h.cmpf.GetService(info.Role)
 	camp, err := cs.Get(id)
 	if err != nil {
@@ -91,11 +97,14 @@ func (h *Handler) attachCampaign(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	data := &campInfo{}
 	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.cmpf.GetService(info.Role)
 	if err := ws.AttachCampaign(data.ThreadID, data.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
@@ -109,11 +118,14 @@ func (h *Handler) assignCampaign(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	data := &campInfo{}
 	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
-
 	ws := h.cmpf.GetService(info.Role)
 	if err := ws.AssignCampaign(data.TargetologID, data.CampaignID); err != nil {
 		return ctx.String(http.StatusInternalServerError, err.Error())
