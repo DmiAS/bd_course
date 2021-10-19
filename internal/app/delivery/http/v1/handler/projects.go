@@ -60,11 +60,14 @@ func (h *Handler) getProject(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-
 	data := &projectInfo{}
 	if err := data.bind(ctx); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
+	if err := canManageAccountData(info.Role, info.ID, data.ClientID, models.AdminRole, models.WorkerRole); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
+	}
+
 	ps := h.pf.GetService(info.Role)
 	project, err := ps.Get(data.ProjectID)
 	if err != nil {
