@@ -63,7 +63,7 @@ func (h *Handler) getClients(ctx echo.Context) error {
 		log.Println(err)
 		return ctx.NoContent(http.StatusNonAuthoritativeInfo)
 	}
-	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole); err != nil {
+	if err := canManageAccountData(info.Role, info.ID, uuid.UUID{}, models.AdminRole, models.WorkerRole); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -86,7 +86,7 @@ func (h *Handler) getClient(ctx echo.Context) error {
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, "invalid uuid")
 	}
-	if err := canManageAccountData(info.Role, info.ID, targetID, models.AdminRole); err != nil {
+	if err := canManageAccountData(info.Role, info.ID, targetID, models.AdminRole, models.WorkerRole); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
