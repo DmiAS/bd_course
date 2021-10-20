@@ -21,7 +21,7 @@ grant select, update
     on users
     to worker;
 
-grant select, insert, update
+grant select, insert, update, delete
     on threads
     to worker;
 
