@@ -8,6 +8,10 @@ grant select, update
     on users, auths
     to client;
 
+grant insert
+    on updated_users
+    to client;
+
 grant select
     on projects, threads, campaigns, campaign_stats
     to client;
@@ -15,6 +19,10 @@ grant select
 -- grant privileges for worker
 grant select
     on workers
+    to worker;
+
+grant insert
+    on campaign_changes, updated_users
     to worker;
 
 grant select, update
