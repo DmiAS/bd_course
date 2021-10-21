@@ -1,6 +1,6 @@
 -- grant privileges for administrator
 grant ALL
-    on auths, campaign_stats, campaigns, projects, threads, users, workers
+    on auths, campaign_stats, campaigns, projects, threads, users, workers, campaign_changes, updated_users
     to administrator;
 
 -- grant privileges for client
